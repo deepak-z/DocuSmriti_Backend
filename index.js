@@ -5,7 +5,7 @@ const port = 3333;
 var nodemailer = require("nodemailer");
 const cors = require("cors");
 const corsOptions = {
-  origin: "*",
+  origin: '*',
   credentials: true, //access-control-allow-credentials:true
   optionSuccessStatus: 200,
 };
@@ -33,7 +33,7 @@ app.post("/sendMail", (req, res) => {
     from: process.env.sendingEmail,
     to: req.body.receiverEmail,
     subject: req.body.subject,
-    html: req.body.html,
+    html: {path: './email.html'},
     text: "BasicText",
   };
 
