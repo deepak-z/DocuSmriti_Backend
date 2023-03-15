@@ -21,7 +21,7 @@ var transporter = nodemailer.createTransport({
 });
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send("Welcom to VDS backend!");
 });
 
 app.post("/sendMail", (req, res) => {
@@ -33,7 +33,8 @@ app.post("/sendMail", (req, res) => {
     from: process.env.sendingEmail,
     to: req.body.receiverEmail,
     subject: req.body.subject,
-    text: "Flex marta hain saala",
+    html: req.body.html,
+    text: "BasicText",
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
