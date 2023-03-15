@@ -21,7 +21,7 @@ app.post('/sendMail', (req, res) => {
     
 
   var mailOptions = {
-    from: process.env.sendingEmail,
+    from: process.env.sendingEmail, 
     to: req.body.receiverEmail,
     subject: req.body.subject,
     text: 'Flex marta hain saala'
