@@ -20,6 +20,10 @@ var transporter = nodemailer.createTransport({
   },
 });
 
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
+
 app.post("/sendMail", (req, res) => {
   console.log(req.body.receiverEmail);
   console.log(req.body.subject);
