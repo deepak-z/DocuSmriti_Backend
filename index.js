@@ -12,6 +12,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 require("dotenv").config();
 
+const db = require('./db/conn.js')
+db.init()
 const indexRouter = require('./routes/serviceRouter')
 const emailRouter = require('./routes/emailRouter')
 

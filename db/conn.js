@@ -6,29 +6,20 @@ const client = new Client({
   host: config.db.host,
   user: config.db.user,
   password: config.db.password,
-  database: config.db.database,
 });
-
-// client.connect(function (err) {
-//   if (err) throw err;
-//   console.log("Connected");
-// });
 
 const createDatabase = async () => {
     try {
-        await client.connect();                            // gets connection
-        await client.query('CREATE DATABASE my_database'); // sends queries
-        return true;
+        await client.connect();                          
+        await client.query(`CREATE DATABASE ${config.db.database};`);         
+        console.log('Database created');
     } catch (error) {
-        console.error(error.stack);
-        return false;
-    } finally {
-        await client.end();                                // closes connection
-    }
+        //console.log(error);
+        console.log('Database already exists');
+    } 
 };
 
-createDatabase().then((result) => {
-    if (result) {
-        console.log('Database created');
-    }
-});
+
+exports.init = () => {
+    createDatabase()
+}

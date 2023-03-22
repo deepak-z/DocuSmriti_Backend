@@ -21,7 +21,7 @@ router.post("/send", (req, res) => {
     from: config.email.from,
     to: req.body.receiverEmail,
     subject: req.body.subject,
-    html: { path: '../email.html' },
+    html: { path: './email/signatureInvitation.html' },
     text: "BasicText",
   };
 
