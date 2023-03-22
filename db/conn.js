@@ -1,6 +1,7 @@
 import  config  from "../config/config.js";
 import pg from 'pg'
-const { Client, Pool } = pg
+import { exec } from 'child_process'
+const { Client } = pg
 
 const createDbClient = new Client({
     port: config.db.port,
@@ -9,17 +10,10 @@ const createDbClient = new Client({
     password: config.db.password,
 })
 
-const db = new Pool({
-    port: config.db.port,
-    host: config.db.host,
-    user: config.db.user,
-    password: config.db.password,
-    database: config.db.database
-})
 
 export async function init() {
     await createDatabase()
-    await connectDatabase()
+    await migrate()
 }
 
 const createDatabase = async () => {
@@ -35,20 +29,10 @@ const createDatabase = async () => {
     }
 };
 
-async function connectDatabase() {
-    try {
-        await db.connect()
-        console.log('Database connected')
-    } catch (error) {
-        console.error('Error connecting database')
-    } 
-}
 
-export async function execute(query) {
-    try {
-        const data = await db.query(query) 
-        return data, undefined
-    } catch (error) {
-        return undefined, error
-    } 
+async function migrate(){
+    exec('npx prisma migrate dev --name init', (err, info) => {
+        console.log("DB migrated");
+        console.log(info);
+    })
 }
