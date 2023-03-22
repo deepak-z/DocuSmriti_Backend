@@ -1,25 +1,17 @@
-const express = require("express");
-
+import config from "./config/config.js";
+import indexRouter from './routes/serviceRouter.js';
+import emailRouter from './routes/emailRouter.js';
+import express, { json } from "express";
+import { init as dbInit } from './db/conn.js';
+import cors from "cors";
 const app = express();
-app.use(express.json());
 
-const cors = require("cors");
-const corsOptions = {
-  origin: '*',
-  credentials: true, //access-control-allow-credentials:true
-  optionSuccessStatus: 200,
-};
-app.use(cors(corsOptions));
-require("dotenv").config();
-
-const db = require('./db/conn.js')
-db.init()
-const indexRouter = require('./routes/serviceRouter')
-const emailRouter = require('./routes/emailRouter')
-
+app.use(json());
+app.use(cors(config.corsOptions));
 app.use("/mail", emailRouter);
 app.use('/',indexRouter)
 
-app.listen(3333, () => {
-  console.log(`Example app listening at http://localhost:3333`);
+dbInit()
+app.listen(config.server.port, config.server.host, () => {
+  console.log(`Example app listening at http://${config.server.host}:${config.server.port}`);
 });
