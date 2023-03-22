@@ -1,8 +1,8 @@
 const express = require("express");
+
 const app = express();
 app.use(express.json());
-const port = 3333;
-var nodemailer = require("nodemailer");
+
 const cors = require("cors");
 const corsOptions = {
   origin: '*',
@@ -12,41 +12,12 @@ const corsOptions = {
 app.use(cors(corsOptions));
 require("dotenv").config();
 
-var transporter = nodemailer.createTransport({
-  service: process.env.sendingEmailService,
-  auth: {
-    user: process.env.sendingEmail,
-    pass: process.env.sendingEmailPassword,
-  },
-});
+const indexRouter = require('./routes/serviceRouter')
+const emailRouter = require('./routes/emailRouter')
 
-app.get("/", (req, res) => {
-  res.send("Welcom to VDS backend!");
-});
+app.use("/mail", emailRouter);
+app.use('/',indexRouter)
 
-app.post("/sendMail", (req, res) => {
-  console.log(req.body.receiverEmail);
-  console.log(req.body.subject);
-  console.log(process.env.sendingEmail);
-
-  var mailOptions = {
-    from: process.env.sendingEmail,
-    to: req.body.receiverEmail,
-    subject: req.body.subject,
-    html: {path: './email.html'},
-    text: "BasicText",
-  };
-
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log("Email sent: " + info.response);
-      res.send("Email sent successfully");
-    }
-  });
-});
-
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+app.listen(3333, () => {
+  console.log(`Example app listening at http://localhost:3333`);
 });
