@@ -11,7 +11,7 @@ app.use(cors(config.corsOptions));
 app.use("/mail", emailRouter);
 app.use('/',indexRouter)
 
-dbInit()
+await dbInit()
 app.listen(config.server.port, config.server.host, () => {
   console.log(`Example app listening at http://${config.server.host}:${config.server.port}`);
 });

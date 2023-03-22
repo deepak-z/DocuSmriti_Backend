@@ -17,11 +17,11 @@ export async function triggerEmail(req){
         html: { path: './email/signatureInvitation.html' },
         text: "BasicText",
     }
-    var response = "Email sent successfully"
+
     try {
         await transporter.sendMail(mailOptions)
+        return "Email sent successfully"
     } catch(err) {
-        response = "Email not sent"
+        return "Email not sent"
     }
-    return response
 }
