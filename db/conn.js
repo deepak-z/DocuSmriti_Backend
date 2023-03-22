@@ -3,10 +3,10 @@ import pg from 'pg'
 const { Client } = pg
 console.log(config.db)
 const client = new Client({
-  port: config.db.port,
-  host: config.db.host,
-  user: config.db.user,
-  password: config.db.password,
+    port: config.db.port,
+    host: config.db.host,
+    user: config.db.user,
+    password: config.db.password,
 })
 
 const createDatabase = async () => {

@@ -4,8 +4,8 @@ import { createTransport } from "nodemailer";
 var transporter = createTransport({
     service: config.email.service,
     auth: {
-      user: config.email.from,
-      pass: config.email.password,
+        user: config.email.from,
+        pass: config.email.password,
     },
 })
 
