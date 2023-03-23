@@ -1,4 +1,4 @@
-import { triggerEmail } from "../helper/sendEmailHelper.js"
+import { triggerEmail } from "../helper/emailHelper.js"
 
 export async function sendEmail(req, res, next) {
     var response = await triggerEmail(req)
