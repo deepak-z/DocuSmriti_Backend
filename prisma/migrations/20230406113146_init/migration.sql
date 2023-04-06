@@ -1,7 +1,8 @@
 -- CreateTable
 CREATE TABLE "users" (
     "id" SERIAL NOT NULL,
-    "wallet" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "wallet_address" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "is_active" BOOLEAN NOT NULL DEFAULT true,
 
@@ -9,7 +10,7 @@ CREATE TABLE "users" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "users_wallet_key" ON "users"("wallet");
+CREATE UNIQUE INDEX "users_wallet_address_key" ON "users"("wallet_address");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");

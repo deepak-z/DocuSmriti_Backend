@@ -10,6 +10,12 @@ var transporter = createTransport({
 })
 
 export async function triggerEmail(req){
+    if (req.body.receiverEmail == null) {
+        return ["Email not sent", "Receiver email cam't be empty"]
+    }
+    if (req.body.subject == null) {
+        return ["Email not sent", "Subject cam't be empty"]
+    }
     var mailOptions = {
         from: config.email.from,
         to: req.body.receiverEmail,
@@ -20,8 +26,9 @@ export async function triggerEmail(req){
 
     try {
         await transporter.sendMail(mailOptions)
-        return "Email sent successfully"
+        return ["Email sent successfully", null]
     } catch(err) {
-        return "Email not sent"
+        console.log(err);
+        return ["Email not sent", err]
     }
 }
