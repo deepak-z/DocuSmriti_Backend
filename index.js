@@ -1,52 +1,17 @@
-const express = require("express");
+import config from "./config/config.js";
+import indexRouter from './routes/serviceRouter.js';
+import emailRouter from './routes/emailRouter.js';
+import express, { json } from "express";
+import { init as dbInit } from './db/conn.js';
+import cors from "cors";
 const app = express();
-app.use(express.json());
-const port = 3333;
-var nodemailer = require("nodemailer");
-const cors = require("cors");
-const corsOptions = {
-  origin: '*',
-  credentials: true, //access-control-allow-credentials:true
-  optionSuccessStatus: 200,
-};
-app.use(cors(corsOptions));
-require("dotenv").config();
 
-var transporter = nodemailer.createTransport({
-  service: process.env.sendingEmailService,
-  auth: {
-    user: process.env.sendingEmail,
-    pass: process.env.sendingEmailPassword,
-  },
-});
+app.use(json());
+app.use(cors(config.corsOptions));
+app.use("/mail", emailRouter);
+app.use('/',indexRouter)
 
-app.get("/", (req, res) => {
-  res.send("Welcom to VDS backend!");
-});
-
-app.post("/sendMail", (req, res) => {
-  console.log(req.body.receiverEmail);
-  console.log(req.body.subject);
-  console.log(process.env.sendingEmail);
-
-  var mailOptions = {
-    from: process.env.sendingEmail,
-    to: req.body.receiverEmail,
-    subject: req.body.subject,
-    html: {path: './email.html'},
-    text: "BasicText",
-  };
-
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log("Email sent: " + info.response);
-      res.send("Email sent successfully");
-    }
-  });
-});
-
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+await dbInit()
+app.listen(config.server.port, config.server.host, () => {
+  console.log(`Example app listening at http://${config.server.host}:${config.server.port}`);
 });
