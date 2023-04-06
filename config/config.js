@@ -1,7 +1,7 @@
-require("dotenv").config();
+import dotenv from "dotenv"
+dotenv.config()
 
 const config = {
-  port: process.env.port,
   db: {
     port: process.env.postgresPort,
     host: process.env.postgresHost,
@@ -14,6 +14,15 @@ const config = {
     from: process.env.emailFrom,
     password: process.env.emailPassword,
   },
-};
+  server: {
+    host: process.env.host,
+    port: process.env.port
+  },
+  corsOptions: {
+    origin: '*',
+    credentials: true, 
+    optionSuccessStatus: 200,
+  }
+}
 
-module.exports = config;
+export default config

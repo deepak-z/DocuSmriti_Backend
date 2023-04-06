@@ -1,8 +1,8 @@
-const express = require("express")
-const router = express.Router()
+import { Router } from "express"
+const router = Router()
 
-router.get("/",(req,res) => {
-    res.send("Welcome to DocuSmriti Backend")
+router.get("/", (req, res) => {
+    res.status(200).send("Welcome to DocuSmriti Backend")
 })
 
-module.exports = router
+export default router
