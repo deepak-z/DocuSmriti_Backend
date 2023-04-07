@@ -13,12 +13,15 @@ export async function externalApiCall(method, url, body, header) {
         url: url,
         headers: headers,
         body: body,
-      }
+    }
     try {
         const res = await axios(request)
         return [res.status, res.data, null]
     }
     catch(err){
-        return [400, "", err]
+        if (err.response) {
+            return [err.response.status, "", err.response.data.error]
+        }
+        return [400, "", "TOKEN VERIFICATION ERROR"]
     }
 }

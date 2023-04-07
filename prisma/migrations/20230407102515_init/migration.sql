@@ -10,7 +10,4 @@ CREATE TABLE "users" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "users_wallet_address_key" ON "users"("wallet_address");
-
--- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");

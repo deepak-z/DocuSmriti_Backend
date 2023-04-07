@@ -13,7 +13,7 @@ datasource db {
 model users {
   id                  Int       @id @default(autoincrement())
   name                String
-  wallet_address      String    @unique
+  wallet_address      String    
   email               String    @unique
   is_active           Boolean   @default(true)
 }
