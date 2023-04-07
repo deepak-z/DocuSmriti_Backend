@@ -28,3 +28,35 @@ export async function getUserByEmail(email) {
         return [null, err]
     }
 }
+
+export async function getUserByWalletAddress(walletAddress) {
+    try {
+        const user = await prisma.users.findFirst({
+            where: {
+                wallet_address:  walletAddress,
+            }
+        })
+        return [user, null]
+    }
+    catch(err) {
+        return [null, err]
+    }
+}
+
+
+export async function addWallet(req) {
+    try {
+        const user = await prisma.users.update({
+            where: {
+                email:  req.userInfo.email,
+            },
+            data : {
+                wallet_address:  req.body.walletAddress,
+            }
+        })
+        return [user, null]
+    }
+    catch(err) {
+        return [null, err]
+    }
+}

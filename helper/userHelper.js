@@ -1,4 +1,4 @@
-import { createUser, getUserByEmail } from "../model/users.js";
+import { createUser, getUserByEmail, getUserByWalletAddress, addWallet } from "../model/users.js";
 
 export async function userLogIn(req) {
     var [user, err] = await getUserByEmail(req.userInfo.email)
@@ -15,3 +15,21 @@ export async function userLogIn(req) {
     return [user, null]
 }
 
+export async function linkUserWallet(req) {
+    var [user, err] = await getUserByEmail(req.userInfo.email)
+    if(err != null){
+        return ["Unable to find user", err]
+    }
+    [user, err] = await getUserByWalletAddress(req.body.walletAddress)
+    if(err != null){
+        return ["Unable to find user", err]
+    }
+    if(user != null){
+        return ["Wallet linked to another user", "INVALID WALLET LINKED"]
+    }
+    [user, err] = await addWallet(req)
+    if(err != null){
+        return ["Unable to link wallet with user", err]
+    }
+    return [user, null]
+}
