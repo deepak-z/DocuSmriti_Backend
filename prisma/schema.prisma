@@ -16,6 +16,7 @@ model users {
   wallet_address      String      @default("")
   email               String      @unique
   is_active           Boolean     @default(true)
+  kyc_status          String      @default("")
   created_at          DateTime    @default(now())
   updated_at          DateTime    @updatedAt
 }
