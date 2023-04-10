@@ -14,7 +14,7 @@ export async function triggerEmail(req){
         return ["Email not sent", "Receiver email cam't be empty"]
     }
     if (req.body.subject == null) {
-        return ["Email not sent", "Subject cam't be empty"]
+        return ["Email not sent", "Subject can't be empty"]
     }
     var mailOptions = {
         from: config.email.from,

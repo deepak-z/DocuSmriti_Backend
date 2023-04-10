@@ -1,4 +1,5 @@
-import { createUser, getUserByEmail, getUserByWalletAddress, addWallet } from "../model/users.js";
+import { createUser, getUserByEmail, addWallet } from "../model/users.js";
+import constant from "../constants/constant.js";
 
 export async function userLogIn(req) {
     var [user, err] = await getUserByEmail(req.userInfo.email)
@@ -16,22 +17,18 @@ export async function userLogIn(req) {
 }
 
 export async function linkUserWallet(req) {
+    const wallet = req.body.wallet.toUpperCase()
+    if(wallet != constant.CUSTODIAL_WALLET || wallet != constant.METAMASK_WALLET) {
+        return ["Invalid wallet type provided", "INVALID WALLET TYPE"]
+    }
     var [user, err] = await getUserByEmail(req.userInfo.email)
     if(err != null){
         return ["Unable to find user", err]
     }
-    const userEmail = user.email;
-    [user, err] = await getUserByWalletAddress(req.body.walletAddress)
-    if(err != null){
-        return ["Unable to find user", err]
+    if(user.wallet_type != ""){
+        return [{"message":"Wallet already linked"}, null]
     }
-    if(user != null){
-        if(userEmail == user.email){
-            return [{"message":"Wallet already linked"}, null]
-        }
-        return ["Wallet linked to another user", "INVALID WALLET LINKED"]
-    }
-    [user, err] = await addWallet(req)
+    [user, err] = await addWallet(wallet)
     if(err != null){
         return ["Unable to link wallet with user", err]
     }
