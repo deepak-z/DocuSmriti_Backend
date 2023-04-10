@@ -1,6 +1,7 @@
 import { externalApiCall } from "./externalApiCall.js"
 import { sendResponse } from "../utility/response.js";
 import { getUserByEmail } from "../model/users.js";
+import constant from "../constants/constant.js";
 
 const uri = "https://www.googleapis.com/oauth2/v1/userinfo"
 
@@ -27,10 +28,9 @@ export async function verifyGoogleToken(req, res, next) {
     next()
 }
 
-export function verifyUser(checkIsActive, checkKyc, checkIsWalletLiked, verifyLinkedWallet) {
+export function verifyUser(checkIsActive, checkKyc, checkIsWalletLiked, checkIsCustodialWalletLiked) {
     return async function(req, res, next){
         var [user, err] = await getUserByEmail(req.userInfo.email)
-        console.log(user.wallet_address);
         if(err != null){
             return ["Unable to find user", err]
         }
@@ -43,11 +43,8 @@ export function verifyUser(checkIsActive, checkKyc, checkIsWalletLiked, verifyLi
         if(checkKyc){ //@TODO add kyc check
             return ["User kyc is not verified", "UNVERIFIED USER"]
         }
-        if(checkIsWalletLiked && user.wallet_address == ""){
-            return ["Wallet is not linked this user", "WALLET NOT LINKED"]
-        }
-        if(verifyLinkedWallet && user.wallet_address != req.body.walletAddress){
-            return ["Wallet does not belongs to this user", "INVALID WALLET ADDRESS"]
+        if(checkIsCustodialWalletLiked && user.wallet_type != constant.CUSTODIAL_WALLET){
+            return ["Wallet is not linked", "WALLET NOT LINKED"]
         }
         req.user = user
         next();
