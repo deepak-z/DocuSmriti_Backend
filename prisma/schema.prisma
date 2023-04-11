@@ -11,9 +11,12 @@ datasource db {
 }
 
 model users {
-  id                  Int       @id @default(autoincrement())
+  id                  Int         @id @default(autoincrement())
   name                String
-  wallet_address      String    @unique
-  email               String    @unique
-  is_active           Boolean   @default(true)
+  wallet_type         String      @default("")
+  email               String      @unique
+  is_active           Boolean     @default(true)
+  kyc_status          String      @default("")
+  created_at          DateTime    @default(now())
+  updated_at          DateTime    @updatedAt
 }
