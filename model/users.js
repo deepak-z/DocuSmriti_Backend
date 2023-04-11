@@ -28,22 +28,3 @@ export async function getUserByEmail(email) {
         return [null, err]
     }
 }
-
-
-
-export async function addWallet(wallet) {
-    try {
-        const user = await prisma.users.update({
-            where: {
-                email:  req.userInfo.email,
-            },
-            data : {
-                wallet_type:  wallet,
-            }
-        })
-        return [user, null]
-    }
-    catch(err) {
-        return [null, err]
-    }
-}

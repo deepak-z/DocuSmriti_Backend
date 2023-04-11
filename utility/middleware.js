@@ -3,7 +3,6 @@ import { sendResponse } from "../utility/response.js";
 import { getUserByEmail } from "../model/users.js";
 import constant from "../constants/constant.js";
 
-const uri = "https://www.googleapis.com/oauth2/v1/userinfo"
 
 export async function verifyGoogleToken(req, res, next) {
     const token = getTokenFromHeader(req)
@@ -11,7 +10,7 @@ export async function verifyGoogleToken(req, res, next) {
         sendResponse(res, "No Token Found", "INVALID TOKEN")
         return
     }
-    const url = `${uri}?access_token=${token}`
+    const url = `${constant.GOOGLE_TOKEN_API}?access_token=${token}`
     let headers = new Map()
     headers.set("Authorization", `Bearer ${token}`)
     const [status, response, err] = await externalApiCall('get', url, {}, headers)
@@ -28,7 +27,7 @@ export async function verifyGoogleToken(req, res, next) {
     next()
 }
 
-export function verifyUser(checkIsActive, checkKyc, checkIsWalletLiked, checkIsCustodialWalletLiked) {
+export function verifyUser(checkIsActive, checkKyc) {
     return async function(req, res, next){
         var [user, err] = await getUserByEmail(req.userInfo.email)
         if(err != null){
@@ -42,9 +41,6 @@ export function verifyUser(checkIsActive, checkKyc, checkIsWalletLiked, checkIsC
         }
         if(checkKyc){ //@TODO add kyc check
             return ["User kyc is not verified", "UNVERIFIED USER"]
-        }
-        if(checkIsCustodialWalletLiked && user.wallet_type != constant.CUSTODIAL_WALLET){
-            return ["Wallet is not linked", "WALLET NOT LINKED"]
         }
         req.user = user
         next();

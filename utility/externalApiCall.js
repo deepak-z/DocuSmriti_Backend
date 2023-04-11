@@ -22,6 +22,6 @@ export async function externalApiCall(method, url, body, header) {
         if (err.response) {
             return [err.response.status, "", err.response.data.error]
         }
-        return [400, "", "TOKEN VERIFICATION ERROR"]
+        return [400, "", "INVALID PATH"]
     }
 }

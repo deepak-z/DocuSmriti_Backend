@@ -1,7 +1,7 @@
 import { Router } from "express"
 const router = Router()
 
-import { logIn, linkWallet } from "../controller/userController.js"
+import { logIn } from "../controller/userController.js"
 import { verifyGoogleToken, verifyUser } from "../utility/middleware.js"
 
 router.get("/", (req, res) => {
@@ -9,6 +9,5 @@ router.get("/", (req, res) => {
 })
 
 router.post("/logIn", verifyGoogleToken, logIn)
-router.post("/linkWallet", verifyGoogleToken, linkWallet)
 
 export default router
