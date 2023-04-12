@@ -1,5 +1,5 @@
-import dotenv from "dotenv"
-dotenv.config()
+import dotenv from "dotenv";
+dotenv.config();
 
 const config = {
   db: {
@@ -16,13 +16,21 @@ const config = {
   },
   server: {
     host: process.env.host,
-    port: process.env.port
+    port: process.env.port,
   },
   corsOptions: {
-    origin: '*',
-    credentials: true, 
+    origin: "*",
+    credentials: true,
     optionSuccessStatus: 200,
-  }
-}
+  },
+  blockchain: {
+    alchemyDocusmritiSepoliaHTTPURL:
+      process.env.alchemyDocusmritiSepoliaHTTPURL,
+    alchemyDocusmritiSepoliaApiKey: process.env.alchemyDocusmritiSepoliaApiKey,
+    contractAddress: process.env.contractAddress,
+    docuSmritiWalletAddress: process.env.docuSmritiWalletAddress,
+    docuSmritiWalletPrivateKey: process.env.docuSmritiWalletPrivateKey
+  },
+};
 
-export default config
+export default config;
