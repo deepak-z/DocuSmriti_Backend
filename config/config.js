@@ -3,15 +3,15 @@ dotenv.config();
 
 const config = {
   db: {
-    port: process.env.postgresPort,
-    host: process.env.postgresHost,
-    user: process.env.postgresUser,
+    port:     process.env.postgresPort,
+    host:     process.env.postgresHost,
+    user:     process.env.postgresUser,
     password: process.env.postgresPassword,
     database: process.env.postgresDatabase,
   },
   email: {
-    service: process.env.emailService,
-    from: process.env.emailFrom,
+    service:  process.env.emailService,
+    from:     process.env.emailFrom,
     password: process.env.emailPassword,
   },
   server: {
@@ -24,12 +24,11 @@ const config = {
     optionSuccessStatus: 200,
   },
   blockchain: {
-    alchemyDocusmritiSepoliaHTTPURL:
-      process.env.alchemyDocusmritiSepoliaHTTPURL,
-    alchemyDocusmritiSepoliaApiKey: process.env.alchemyDocusmritiSepoliaApiKey,
-    contractAddress: process.env.contractAddress,
-    docuSmritiWalletAddress: process.env.docuSmritiWalletAddress,
-    docuSmritiWalletPrivateKey: process.env.docuSmritiWalletPrivateKey
+    rpcUrl:                       process.env.rpcUrl,
+    alchemyApiKey:                process.env.alchemyApiKey,
+    contractAddress:              process.env.contractAddress,
+    docuSmritiWalletAddress:      process.env.docuSmritiWalletAddress,
+    docuSmritiWalletPrivateKey:   process.env.docuSmritiWalletPrivateKey
   },
 };
 
