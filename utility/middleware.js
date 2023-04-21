@@ -33,7 +33,7 @@ export function verifyUser(checkIsActive, checkKyc) {
         if(err != null){
             return ["Unable to find user", err]
         }
-        if(user != null){
+        if(user == null){
             return ["User not found", "INVALID USER"]
         }
         if(checkIsActive && !user.is_active){
