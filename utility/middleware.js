@@ -31,19 +31,23 @@ export function verifyUser(checkIsActive, checkKyc) {
     return async function(req, res, next){
         var [user, err] = await getUserByEmail(req.userInfo.email)
         if(err != null){
-            return ["Unable to find user", err]
+            sendResponse(res, "Unable to find user", err)
+            return
         }
         if(user == null){
-            return ["User not found", "INVALID USER"]
+            sendResponse(res, "User not found", "INVALID USER")
+            return
         }
         if(checkIsActive && !user.is_active){
-            return ["User is blocked", "INACTIVE USER"]
+            sendResponse(res, "User is blocked", "INACTIVE USER")
+            return
         }
         if(checkKyc){ //@TODO add kyc check
-            return ["User kyc is not verified", "UNVERIFIED USER"]
+            sendResponse(res, "User kyc is not verified", "UNVERIFIED USER")
+            return
         }
         req.user = user
-        next();
+        next()
     }
 }
 
