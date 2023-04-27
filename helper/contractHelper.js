@@ -111,8 +111,8 @@ async function getEthPrice(){
 }
 
 function validateRequest(req){
-    if(typeof req.body.category != "string" || typeof req.body.description != "string" || typeof req.body.name != "string" ||  typeof req.body.start_date != "string" ||
-    typeof req.body.end_date != "string"  || typeof req.body.sha256 != "string" || typeof req.body.ipfsUrl != "string") {
+    if(!req.body.category  ||  !req.body.description  ||  !req.body.name  ||   !req.body.start_date  ||
+     !req.body.end_date   ||  !req.body.sha256  ||  !req.body.ipfsUrl ) {
         return false
     }
     return true

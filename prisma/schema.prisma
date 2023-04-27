@@ -11,12 +11,29 @@ datasource db {
 }
 
 model users {
-  id                  Int         @id @default(autoincrement())
-  name                String
-  wallet_type         String      @default("")
-  email               String      @unique
-  is_active           Boolean     @default(true)
-  kyc_status          String      @default("")
-  created_at          DateTime    @default(now())
-  updated_at          DateTime    @updatedAt
+  id         Int       @id @default(autoincrement())
+  name       String
+  email      String    @unique
+  kyc_status String    @default("not_verified")
+  is_active  Boolean   @default(true)
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  kyc_info   kyc_info?
+}
+
+model kyc_info {
+  id                 Int      @id @default(autoincrement())
+  user               users    @relation(fields: [user_id], references: [id])
+  user_id            Int      @unique
+  first_name         String   @default("")
+  last_name          String   @default("")
+  dob                String   @default("")
+  status             String   @default("")
+  gender             String   @default("")
+  aadhaar_number     String   @default("")
+  aadhaar_front_path String   @default("")
+  aadhaar_back_path  String   @default("")
+  selfie_path        String   @default("")
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
 }
