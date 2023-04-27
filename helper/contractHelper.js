@@ -5,7 +5,7 @@ import abi from "../utility/contractABI.js"
 const _from = config.blockchain.docuSmritiWalletAddress
 const _privateKey = config.blockchain.docuSmritiWalletPrivateKey
 const _contractAddress =  config.blockchain.contractAddress
-const _providerURL = config.blockchain.rpcUrl + config.blockchain.alchemyApiKey;
+const _providerURL = config.blockchain.rpcUrl + "/" + config.blockchain.alchemyApiKey;
 
 const web3 = new Web3(new Web3.providers.HttpProvider(_providerURL))
 const contract = new web3.eth.Contract(abi, _contractAddress);
