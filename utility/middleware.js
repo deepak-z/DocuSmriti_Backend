@@ -16,7 +16,7 @@ export async function verifyGoogleToken(req, res, next) {
     const [status, response, err] = await externalApiCall('get', url, {}, headers)
  
     if(err != null){
-        sendResponse(res, "", err)
+        sendResponse(res, "Invalid Token or Token Expired", "INVALID TOKEN")
         return
     }
     if(status != 200){
