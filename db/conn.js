@@ -12,7 +12,7 @@ const createDbClient = new Client({
 
 
 export async function init() {
-    await createDatabase()
+    //await createDatabase()
     await migrate()
 }
 
