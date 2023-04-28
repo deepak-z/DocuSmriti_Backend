@@ -38,9 +38,9 @@ const abi = [
 	{
 		"inputs": [
 			{
-				"internalType": "address",
+				"internalType": "string",
 				"name": "",
-				"type": "address"
+				"type": "string"
 			},
 			{
 				"internalType": "uint256",
@@ -161,11 +161,6 @@ const abi = [
 				"type": "string"
 			},
 			{
-				"internalType": "address[]",
-				"name": "_addresses",
-				"type": "address[]"
-			},
-			{
 				"internalType": "string[]",
 				"name": "_emails",
 				"type": "string[]"
@@ -180,81 +175,9 @@ const abi = [
 		"inputs": [
 			{
 				"internalType": "string",
-				"name": "_firstName",
+				"name": "_email",
 				"type": "string"
 			},
-			{
-				"internalType": "string",
-				"name": "_lastName",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_gender",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_dob",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_aadhaarNumber",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_aadhaarFrontURL",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_aadhaarBackURL",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_selfieURL",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_createDate",
-				"type": "string"
-			}
-		],
-		"name": "addUserKycInfo",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "addressesInvoledInContractMap",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
 			{
 				"internalType": "string",
 				"name": "_sha256",
@@ -291,7 +214,13 @@ const abi = [
 		"type": "function"
 	},
 	{
-		"inputs": [],
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_email",
+				"type": "string"
+			}
+		],
 		"name": "getAllInvitedContracts",
 		"outputs": [
 			{
@@ -394,17 +323,17 @@ const abi = [
 		"inputs": [
 			{
 				"internalType": "string",
+				"name": "_email",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
 				"name": "_sha256",
 				"type": "string"
 			}
 		],
 		"name": "getContractInfo",
 		"outputs": [
-			{
-				"internalType": "address[]",
-				"name": "",
-				"type": "address[]"
-			},
 			{
 				"internalType": "string[]",
 				"name": "",
@@ -430,7 +359,13 @@ const abi = [
 		"type": "function"
 	},
 	{
-		"inputs": [],
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_email",
+				"type": "string"
+			}
+		],
 		"name": "getContractbyCreator",
 		"outputs": [
 			{
@@ -445,9 +380,9 @@ const abi = [
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "_add",
-				"type": "address"
+				"internalType": "string",
+				"name": "_email",
+				"type": "string"
 			}
 		],
 		"name": "getContractsCount_address",
@@ -464,75 +399,9 @@ const abi = [
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "_add",
-				"type": "address"
-			}
-		],
-		"name": "getUserKycInfo",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "string",
-						"name": "FirstName",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "LastName",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "DOB",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "Gender",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "AadhaarNumber",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "AadhaarFrontURL",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "AadhaarBackURL",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "SelfieURL",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "CreateDate",
-						"type": "string"
-					}
-				],
-				"internalType": "struct CreateContract.userKycInfo",
+				"internalType": "string",
 				"name": "",
-				"type": "tuple"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
+				"type": "string"
 			},
 			{
 				"internalType": "string",
@@ -574,9 +443,9 @@ const abi = [
 	{
 		"inputs": [
 			{
-				"internalType": "address",
+				"internalType": "string",
 				"name": "",
-				"type": "address"
+				"type": "string"
 			},
 			{
 				"internalType": "uint256",

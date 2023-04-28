@@ -19,7 +19,7 @@ export async function addContract(req) {
     }
     const currentDate = new Date().getTime().toString()
     const txn = contract.methods.addContract(req.body.category, req.body.description, req.body.name, req.userInfo.email, req.body.start_date, 
-                                                req.body.end_date, currentDate, req.body.sha256, req.body.ipfsUrl, req.body.addresses, req.body.inviteEmails)
+                                                req.body.end_date, currentDate, req.body.sha256, req.body.ipfsUrl, req.body.inviteEmails)
     const gasLimit = await txn.estimateGas({from: _from})
     const gasPrice = await web3.eth.getGasPrice();
     const data = txn.encodeABI();
@@ -65,7 +65,7 @@ export async function estimateGasPrice(req) {
     
     const currentDate = new Date().getTime().toString()
     const txn = contract.methods.addContract(req.body.category, req.body.description, req.body.name, req.userInfo.email, req.body.start_date, 
-                                                req.body.end_date, currentDate, req.body.sha256, req.body.ipfsUrl, req.body.addresses, req.body.inviteEmails)
+                                                req.body.end_date, currentDate, req.body.sha256, req.body.ipfsUrl, req.body.inviteEmails)
     
     const priceMargin = 1
     const gasLimit = await txn.estimateGas({from: _from})

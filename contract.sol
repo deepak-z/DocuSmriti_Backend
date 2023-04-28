@@ -121,7 +121,9 @@ contract CreateContract is Ownable {
 
 
 
-
+ function getContractCreatePrice() public view returns (uint256) {
+      return ContractCreatePrice;
+  }
 
 
 
