@@ -42,7 +42,7 @@ export function verifyUser(checkIsActive, checkKyc) {
             sendResponse(res, "User is blocked", "INACTIVE USER")
             return
         }
-        if(checkKyc){ //@TODO add kyc check
+        if(checkKyc && user.kyc_status != "verified"){ 
             sendResponse(res, "User kyc is not verified", "UNVERIFIED USER")
             return
         }
