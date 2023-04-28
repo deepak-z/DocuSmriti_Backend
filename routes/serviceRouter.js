@@ -15,6 +15,6 @@ router.post("/addContract", verifyGoogleToken, verifyUser(true, false), AddContr
 router.get("/getQuote", verifyGoogleToken, verifyUser(true, false), EstimateGasPrice)
 
 router.post("/kyc",verifyGoogleToken,verifyUser(true,false), SaveKycInfo)
-router.get("/kyc",verifyGoogleToken,verifyUser(true,false), GetKycInfo)
+router.get("/kyc",verifyGoogleToken,verifyUser(true,true), GetKycInfo)
 
 export default router

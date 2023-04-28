@@ -46,9 +46,6 @@ export async function getUserKycInfo(req) {
       },
     });
 
-    if (kycInfo == null) {
-      return ["no kyc info exists for user", null];
-    }
     return [kycInfo, null];
   } catch (err) {
     return [null, err];
