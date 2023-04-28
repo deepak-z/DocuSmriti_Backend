@@ -9,8 +9,6 @@ contract CreateContract is Ownable {
 
   using Strings for uint256;
 
-  
- 
 
   struct structContractInfo { 
       string Category;
@@ -23,48 +21,18 @@ contract CreateContract is Ownable {
       string IPFSURI;
   }
 
-    struct userKycInfo { 
-      string FirstName;
-      string LastName;
-      string DOB;
-      string Gender;
-      string AadhaarNumber;
-      string AadhaarFrontURL;
-      string AadhaarBackURL;
-      string SelfieURL;
-      string CreateDate;
-  }
-
 
   uint256 public ContractCreatePrice = 0 ether;
 
 
   mapping(string => structContractInfo) public ContractsMap;
-  mapping(address => string[]) public ContractCreatorMap;
-  mapping(address => userKycInfo) private userKycMap;
-  mapping(string => address[]) public addressesInvoledInContractMap;
+  mapping(string => string[]) public ContractCreatorMap;
+
   mapping(string => string[]) public emailsInvolvedInContractMap;
-  mapping(address => string[]) public signatureNeededMap;
-  mapping(address => mapping(string => bool)) public isConfirmed;
 
-    function addUserKycInfo(string memory _firstName,
-                      string memory _lastName,
-                      string memory _gender,
-                      string memory _dob,
-                      string memory _aadhaarNumber,
-                      string memory _aadhaarFrontURL,
-                      string memory _aadhaarBackURL,
-                      string memory _selfieURL,
-                      string memory _createDate) public {
+  mapping(string => string[]) public signatureNeededMap;
 
-    //Condition to check if this address already has some kycInfo
-
-    userKycMap[msg.sender] = userKycInfo(_firstName, _lastName, _gender, _dob, _aadhaarNumber, _aadhaarFrontURL, _aadhaarBackURL, _selfieURL, _createDate);
-  }
-
-    function getUserKycInfo(address _add) public view returns(userKycInfo memory){
-    return userKycMap[_add];
-  }
+  mapping(string => mapping(string => bool)) public isConfirmed;
 
   function addContract(string memory _category,
                       string memory _desc,
@@ -75,7 +43,6 @@ contract CreateContract is Ownable {
                       string memory _createdate,
                       string memory _SHA256,
                       string memory _IPFSURI,
-                      address[] memory _addresses,
                       string[] memory _emails
                       ) public payable {
 
@@ -85,64 +52,62 @@ contract CreateContract is Ownable {
     require(bytes(ContractsMap[_SHA256].Category).length == 0, 'Document already exists.');
 
     ContractsMap[_SHA256] = structContractInfo(_category,_desc, _name, _email, _st_date, _end_date, _createdate, _IPFSURI);
-    ContractCreatorMap[msg.sender].push(_SHA256);
+    ContractCreatorMap[_email].push(_SHA256);
 
-    addressesInvoledInContractMap[_SHA256].push(msg.sender);
     emailsInvolvedInContractMap[_SHA256].push(_email);
-    isConfirmed[msg.sender][_SHA256] = true;
+    isConfirmed[_email][_SHA256] = true;
 
-    populateMaps(_addresses,_emails,_SHA256);
+    populateMaps(_emails,_email,_SHA256);
     //DailyContractCount[_createdate] += 1;
   }
 
- function populateMaps(address[] memory _addresses, string[] memory _emails, string memory _sha256) private {
-        for (uint i = 0; i < _addresses.length; i++) {
-            address user = _addresses[i];
+ function populateMaps(string[] memory _emails,string memory _email, string memory _sha256) private {
+        for (uint i = 0; i < _emails.length; i++) {
             string memory email = _emails[i];
-            require(user != address(0), "invalid user address");
-            require(user != msg.sender, "can't use owner as participants");
-            addressesInvoledInContractMap[_sha256].push(user);
+            require(keccak256(bytes(email)) != keccak256(bytes(_email)),"Email cannot be same as owner");
             emailsInvolvedInContractMap[_sha256].push(email);
-            signatureNeededMap[user].push( _sha256);
-            isConfirmed[user][_sha256] = false;
+            signatureNeededMap[email].push( _sha256);
+
+            isConfirmed[email][_sha256] = false;
         }
   }
 
-  function getContractInfo(string memory _sha256) public view returns ( address[] memory, string[] memory, bool[] memory, bool, bool) {
-        address[] memory allUsers = addressesInvoledInContractMap[_sha256];
+  function getContractInfo(string memory _email, string memory _sha256) public view returns (string[] memory, bool[] memory, bool, bool) {
+
         string[] memory allEmails = emailsInvolvedInContractMap[_sha256];
-        bool[] memory statuses = new bool[](allUsers.length);
+        bool[] memory statuses = new bool[](allEmails.length);
         bool isAllSigned = true;
-        bool isSelfSigned = isConfirmed[msg.sender][_sha256];
-        for (uint i = 0; i < allUsers.length; i++) {
-            address user = allUsers[i];
-            statuses[i] = isConfirmed[user][_sha256];
-            if (!isConfirmed[user][_sha256]){
+        bool isSelfSigned = isConfirmed[_email][_sha256];
+
+        for (uint i = 0; i < allEmails.length; i++) {
+            string memory email = allEmails[i];
+            statuses[i] = isConfirmed[email][_sha256];
+            if (!isConfirmed[email][_sha256]){
               isAllSigned = false;
             }
         }
-        return (allUsers, allEmails, statuses ,isAllSigned, isSelfSigned);
+        return (allEmails, statuses ,isAllSigned, isSelfSigned);
     }
 
-  function getContractsCount_address(address _add) public view returns ( uint256 ) {
-    return ContractCreatorMap[_add].length;
+  function getContractsCount_address(string memory _email) public view returns ( uint256 ) {
+    return ContractCreatorMap[_email].length;
   }
 
   function getContract(string memory _SHA256) public view returns ( structContractInfo memory ) {
     return ContractsMap[_SHA256];
   }
 
-    function getAllInvitedContracts() public view returns (string[] memory) {
-        return signatureNeededMap[msg.sender];
+    function getAllInvitedContracts(string memory _email) public view returns (string[] memory) {
+        return signatureNeededMap[_email];
     }
 
-  function getContractbyCreator() public view returns ( string[] memory ) {
-      return ContractCreatorMap[msg.sender];
+  function getContractbyCreator(string memory _email) public view returns ( string[] memory ) {
+      return ContractCreatorMap[_email];
   }
 
         //accept invite
-    function approveTransaction(string memory _sha256) public {
-        isConfirmed[msg.sender][_sha256] = true;
+    function approveTransaction(string memory _email, string memory _sha256) public {
+        isConfirmed[_email][_sha256] = true;
     }
 
     function getBalance() public view returns(uint){
