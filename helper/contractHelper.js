@@ -5,11 +5,11 @@ import abi from "../utility/contractABI.js"
 const _from = config.blockchain.docuSmritiWalletAddress
 const _privateKey = config.blockchain.docuSmritiWalletPrivateKey
 const _contractAddress =  config.blockchain.contractAddress
-const _providerURL = config.blockchain.rpcUrl + "/" + config.blockchain.alchemyApiKey;
+const _providerURL = config.blockchain.rpcUrl + "/" + config.blockchain.alchemyApiKey
 
 const web3 = new Web3(new Web3.providers.HttpProvider(_providerURL))
-const contract = new web3.eth.Contract(abi, _contractAddress);
-web3.eth.accounts.wallet.add(_privateKey);
+const contract = new web3.eth.Contract(abi, _contractAddress)
+web3.eth.accounts.wallet.add(_privateKey)
 
 export async function addContract(req) { 
   try{
@@ -21,8 +21,8 @@ export async function addContract(req) {
     const txn = contract.methods.addContract(req.body.category, req.body.description, req.body.name, req.userInfo.email, req.body.start_date, 
                                                 req.body.end_date, currentDate, req.body.sha256, req.body.ipfsUrl, req.body.inviteEmails)
     const gasLimit = await txn.estimateGas({from: _from})
-    const gasPrice = await web3.eth.getGasPrice();
-    const data = txn.encodeABI();
+    const gasPrice = await web3.eth.getGasPrice()
+    const data = txn.encodeABI()
     const nonce = await web3.eth.getTransactionCount(_from)
     const [price, err] = await getContractPrice()
     if(err != null) {
@@ -37,18 +37,18 @@ export async function addContract(req) {
       gasPrice,
       nonce,
     }
-    console.log('Transaction ready to be sent');
+    console.log('Transaction ready to be sent')
     const response = await web3.eth.sendTransaction(txnData)
-    console.log(`Transaction sent, hash is ${JSON.stringify(response)}`);
+    console.log(`Transaction sent, hash is ${JSON.stringify(response)}`)
     return [response, null]
   }
   catch(err){
-    console.log("error in adding contract", err);
+    console.log("error in adding contract", err)
     return [null, err]
   }
 }
 
-export async function estimateGasPrice(req) { 
+export async function estimateAddContractGasPrice(req) { 
   try{
     const isValidRequest = validateRequest(req)
     if(!isValidRequest) {
@@ -85,7 +85,69 @@ export async function estimateGasPrice(req) {
     return [response, null]
   }
   catch(err){
-    console.log("error estimating gas price", err);
+    console.log("error estimating gas price", err)
+    return [null, err]
+  }
+}
+
+export async function estimateAcceptContractGasPrice(req) { 
+  try{
+    if(!req.body.sha256) {
+        return ["parameters can't be empty", "INVALID_REQUEST"]
+    }
+    const [ethPrice, err] = await getEthPrice()
+    if(err != null) {
+        return ["unable to fetch eth price", err]
+    }
+    
+    const txn = contract.methods.approveTransaction(req.userInfo.email, req.body.sha256)
+
+    const priceMargin = 1
+    const gasLimit = await txn.estimateGas({from: _from})
+    const gasPriceInWei = await web3.eth.getGasPrice()
+    const totalGasFeeInWei = Math.round(gasLimit * gasPriceInWei * priceMargin)
+    const totalGasFeeInEther = Web3.utils.fromWei(`${totalGasFeeInWei}`, 'ether')
+    const response = {
+        "gas_limit" :           Math.round(gasLimit * priceMargin),
+        "gas_price_in_wei" :    parseInt(gasPriceInWei, 10),
+        "total_fee_in_wei" :    totalGasFeeInWei,
+        "total_fee_in_ether" :  totalGasFeeInEther,
+        "total_fee_in_inr" :    Math.max(100, (totalGasFeeInWei) * ethPrice)
+    }
+    return [response, null]
+  }
+  catch(err){
+    console.log("error estimating gas price", err)
+    return [null, err]
+  }
+}
+
+export async function approveTransaction(req) { 
+  try{
+    if(!req.body.sha256) {
+      return ["parameters can't be empty", "INVALID_REQUEST"]
+    }
+    const txn = contract.methods.approveTransaction(req.userInfo.email, req.body.sha256)
+    const gasLimit = await txn.estimateGas({from: _from})
+    const gasPrice = await web3.eth.getGasPrice()
+    const data = txn.encodeABI()
+    const nonce = await web3.eth.getTransactionCount(_from)
+
+    const txnData = {
+      from:     _from,
+      to:       _contractAddress,
+      data,
+      gasLimit,
+      gasPrice,
+      nonce,
+    }
+    console.log('Transaction ready to be sent')
+    const response = await web3.eth.sendTransaction(txnData)
+    console.log(`Transaction sent, hash is ${JSON.stringify(response)}`)
+    return [response, null]
+  }
+  catch(err){
+    console.log("error in adding contract", err)
     return [null, err]
   }
 }
