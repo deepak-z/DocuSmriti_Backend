@@ -2,39 +2,33 @@ import { PrismaClient, Prisma } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export async function saveUserKycInfo(req) {
-  const isValidRequest = validateRequest(req);
-  if (isValidRequest) {
-    const kycInfoObject = {
-      user_id: req.user.id,
-      first_name: req.body.first_name,
-      last_name: req.body.last_name,
-      dob: req.body.dob,
-      status: "verified", // TODO Need Hyperverge implementation for setting status
-      gender: req.body.gender,
-      aadhaar_number: req.body.aadhaar_number, //TODO Need to follow masking principles
-    };
-    try {
-      const [savedKycInfo, updatedUser] = await prisma.$transaction([
-        prisma.kyc_info.create({ data: kycInfoObject }),
-        prisma.users.update({
-          where: {
-            id: req.user.id,
-          },
+  const kycInfoObject = {
+    user_id: req.user.id,
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
+    dob: req.body.dob,
+    status: "pending", // TODO Need Hyperverge implementation for setting status
+    gender: req.body.gender,
+    aadhaar_number: req.body.aadhaar_number, //TODO Need to follow masking principles
+  }
+  try {
+    const [savedKycInfo, updatedUser] = await prisma.$transaction([
+      prisma.kyc_info.create({ data: kycInfoObject }),
+      prisma.users.update({
+        where: {
+          id: req.user.id,
+        },
           data: {
             kyc_status: kycInfoObject.status,
           },
         }),
-      ]);
-
-      return [savedKycInfo, null];
-    } catch (err) {
-      if (err.code == "P2002") {
-        return ["User Kyc Info already stored in DB", err];
-      }
-      return [null, err];
+    ]);
+    return [savedKycInfo, null];
+  } catch (err) {
+    if (err.code == "P2002") {
+      return ["User Kyc Info already stored in DB", err];
     }
-  } else {
-    return ["parameters cannot be empty", "INVALID_REQUEST"];
+    return [null, err];
   }
 }
 
@@ -65,4 +59,25 @@ function validateRequest(req) {
     return false;
   }
   return true;
+}
+
+
+export async function updateUserKycInfo(req) {
+  try {
+    await prisma.kyc_info.update({
+      where: {
+        user_id: req.user.id,
+      },
+      data: {
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        dob: req.body.dob,
+        gender: req.body.gender,
+        aadhaar_number: req.body.aadhaar_number,
+      }
+    });
+    return null;
+  } catch (err) {
+      return err
+  }
 }
