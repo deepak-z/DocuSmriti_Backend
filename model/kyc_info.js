@@ -65,3 +65,18 @@ export async function updateUserKycInfo(req) {
       return err
   }
 }
+
+
+export async function updateKycObject(id, data) {
+  try {
+    await prisma.kyc_info.update({
+      where: {
+        user_id: id,
+      },
+      data: data
+    });
+    return null;
+  } catch (err) {
+      return err
+  }
+}

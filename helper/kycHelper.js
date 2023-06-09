@@ -1,7 +1,7 @@
 
 import { externalApiCall } from "../utility/externalApiCall.js";
 import constant from "../constants/constant.js";
-import { saveUserKycInfo, getUserKycInfo, updateUserKycInfo } from "../model/kyc_info.js";
+import { saveUserKycInfo, getUserKycInfo, updateUserKycInfo, updateKycObject } from "../model/kyc_info.js";
 import config from "../config/config.js";
 
 export async function saveKycInfo(req) {
@@ -45,6 +45,10 @@ export async function saveKycInfo(req) {
         return ["unable to send OTP", err]
     }
     if(status == 200 && response["result"]["is_otp_sent"]){
+        const data = {
+            request_id: response["request_id"]
+        }
+        updateKycObject(req.user.id, data)
         return  ["otp sent succesfully", null]
     }
     return ["unable to send OTP", response["metadata"]["reason_message"]];
