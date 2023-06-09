@@ -11,14 +11,14 @@ datasource db {
 }
 
 model users {
-  id         Int       @id @default(autoincrement())
-  name       String
-  email      String    @unique
-  kyc_status String    @default("not_verified")
-  is_active  Boolean   @default(true)
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  kyc_info   kyc_info?
+  id                   Int                     @id @default(autoincrement())
+  email                String                  @unique
+  kyc_status           String                  @default("not_verified")
+  is_active            Boolean                 @default(true)
+  created_at           DateTime                @default(now())
+  updated_at           DateTime                @updatedAt
+  kyc_info             kyc_info?
+  vendor_call_tracking vendor_call_trackings[]
 }
 
 model kyc_info {
@@ -31,9 +31,40 @@ model kyc_info {
   status             String   @default("")
   gender             String   @default("")
   aadhaar_number     String   @default("")
-  aadhaar_front_path String   @default("")
-  aadhaar_back_path  String   @default("")
+  selfie_match_score Int      @default(0)
+  rejection_reason   String   @default("")
   selfie_path        String   @default("")
+  request_id         String   @default("")
   created_at         DateTime @default(now())
   updated_at         DateTime @updatedAt
+}
+
+model vendors {
+  id              Int      @id @default(autoincrement())
+  name            String
+  country_id      Int
+  is_active       Boolean  @default(true)
+  supported_flows String[]
+  notes           String?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(now()) @updatedAt
+
+  vendor_call_trackings vendor_call_trackings[]
+}
+
+model vendor_call_trackings {
+  id                  Int      @id @default(autoincrement())
+  vendor_id           Int
+  api_endpoint        String
+  request_type        String
+  request_params      String?
+  response_data       String?
+  status_code         Int
+  user_id             Int
+  response_identifier String?  @db.Uuid()
+  created_at          DateTime @default(now())
+  updated_at          DateTime @default(now()) @updatedAt
+
+  vendor vendors @relation(fields: [vendor_id], references: [id])
+  user   users   @relation(fields: [user_id], references: [id])
 }
