@@ -1,18 +1,20 @@
 import axios from 'axios';
 
 export async function externalApiCall(method, url, body, header) {
-    let headers = new Map()
-    headers.set("Accept", 'application/json')
+    let headers = {"Accept": 'application/json', "content-type": "application/json"}
     if(header != null) {
         for (let [key, value] of header) {
-            headers.set(key, value)
+            headers[key] = value
         }
     }
     const request = {
         method: method,
         url: url,
         headers: headers,
-        body: body,
+        body: {},
+    }
+    if(method == 'post'){
+        request.data = body
     }
     try {
         const res = await axios(request)
@@ -20,7 +22,7 @@ export async function externalApiCall(method, url, body, header) {
     }
     catch(err){
         if (err.response) {
-            return [err.response.status, "", err.response.data.error]
+            return [err.response.status, err.response.data, err.response.data.error]
         }
         return [400, "", "INVALID PATH"]
     }

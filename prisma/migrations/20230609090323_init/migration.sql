@@ -23,6 +23,7 @@ CREATE TABLE "kyc_info" (
     "selfie_match_score" INTEGER NOT NULL DEFAULT 0,
     "rejection_reason" TEXT NOT NULL DEFAULT '',
     "selfie_path" TEXT NOT NULL DEFAULT '',
+    "selfie_string" TEXT,
     "request_id" TEXT NOT NULL DEFAULT '',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
