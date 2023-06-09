@@ -12,7 +12,6 @@ datasource db {
 
 model users {
   id         Int       @id @default(autoincrement())
-  name       String
   email      String    @unique
   kyc_status String    @default("not_verified")
   is_active  Boolean   @default(true)
@@ -31,9 +30,33 @@ model kyc_info {
   status             String   @default("")
   gender             String   @default("")
   aadhaar_number     String   @default("")
-  aadhaar_front_path String   @default("")
-  aadhaar_back_path  String   @default("")
+  selfie_match_score Int      @default(0)
+  rejection_reason   String   @default("")
   selfie_path        String   @default("")
   created_at         DateTime @default(now())
   updated_at         DateTime @updatedAt
+}
+
+model vendors {
+  id                 Int      @id @default(autoincrement())
+  name               String   @default("")
+  country_id         Int      @default(0)
+  is_active          Bool     @default(true)
+  notes              String   @default("")
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+}
+
+model vendor_call_tracking {
+  id                 Int       @id @default(autoincrement())
+  vendor             vendors   @relation(fields: [vendor_id], references: [id])
+  vendor_id          Int       @unique
+  api_endpoint       String    @default("")
+  request_type       String    @default("")
+  request_params     String    @default("")
+  response_data      String    @default("")
+  status_code        Int       @default(0)
+  user               users     @relation(fields: [user_id], references: [id])
+  user_id            Int       @default("")
+  created_at         DateTime  @default(now())
 }
