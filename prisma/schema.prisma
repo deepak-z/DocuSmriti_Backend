@@ -11,13 +11,14 @@ datasource db {
 }
 
 model users {
-  id         Int       @id @default(autoincrement())
-  email      String    @unique
-  kyc_status String    @default("not_verified")
-  is_active  Boolean   @default(true)
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  kyc_info   kyc_info?
+  id                    Int       @id @default(autoincrement())
+  email                 String    @unique
+  kyc_status            String    @default("not_verified")
+  is_active             Boolean   @default(true)
+  created_at            DateTime  @default(now())
+  updated_at            DateTime  @updatedAt
+  kyc_info              kyc_info?
+  vendor_call_tracking  vendor_call_tracking?
 }
 
 model kyc_info {
@@ -38,13 +39,14 @@ model kyc_info {
 }
 
 model vendors {
-  id                 Int      @id @default(autoincrement())
-  name               String   @default("")
-  country_id         Int      @default(0)
-  is_active          Bool     @default(true)
-  notes              String   @default("")
-  created_at         DateTime @default(now())
-  updated_at         DateTime @updatedAt
+  id                    Int      @id @default(autoincrement())
+  name                  String   @default("")
+  country_id            Int      @default(0)
+  is_active             Boolean  @default(true)
+  notes                 String   @default("")
+  created_at            DateTime @default(now())
+  updated_at            DateTime @updatedAt
+  vendor_call_tracking  vendor_call_tracking?
 }
 
 model vendor_call_tracking {
@@ -57,6 +59,6 @@ model vendor_call_tracking {
   response_data      String    @default("")
   status_code        Int       @default(0)
   user               users     @relation(fields: [user_id], references: [id])
-  user_id            Int       @default("")
+  user_id            Int       @unique
   created_at         DateTime  @default(now())
 }
