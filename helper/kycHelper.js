@@ -56,3 +56,47 @@ function validateRequest(req) {
     }
     return true
 }
+
+
+export async function validateSelfie(req) {
+    const user = req.user
+    if(user.kyc_status == "verified"){ 
+        return ["User kyc is already verified", "VERIFIED USER"]
+    }
+
+    const [kycInfo, err] = await getUserKycInfo(req)
+    if(err != null){
+        return ["unable to get user kyc data", err]
+    }
+    if(kycInfo == null){
+        return ["user kyc data not found", "KYC_NOT_INITIATED"]
+    } else {
+        if (kycInfo.status == "rejected") {
+            return ["user kyc is rejected", "KYC_REJECTED"]
+        }
+    }
+
+    const url = constant.ZOOP_ONE_SELFIE_API
+    let headers = new Map()
+    headers.set("app-id", config.zoop.apiId)
+    headers.set("api-key", config.zoop.apiKey)
+    const body = {
+        "mode": "sync",
+        "data": {
+          "card_image": constant.AADHAAR_SELFIE,
+          "user_image": constant.USER_SELFIE,
+          "consent": "Y",
+          "consent_text": constant.ZOOP_CONSENT_TEXT
+        },
+    }
+    const [status, response, er] = await externalApiCall('post', url, body, headers)
+    if(er != null){
+        return ["unable to verify selfie", err]
+    }
+    if(status == 200){
+        if (response["result"]["face_match_score"] > constant.SELFIE_THRESOLD) {
+             
+        }
+    }
+    return ["unable to send OTP", response["metadata"]["reason_message"]];
+}
