@@ -46,22 +46,6 @@ export async function getUserKycInfo(req) {
   }
 }
 
-function validateRequest(req) {
-  // TODO: need to add conditions for aadhaar_front_path, aadhaar_back_path and selfie_path
-  if (
-    !req.body.first_name ||
-    !req.body.last_name ||
-    !req.body.gender ||
-    !req.body.dob ||
-    !req.body.aadhaar_number
-  ) {
-    console.log(req.body);
-    return false;
-  }
-  return true;
-}
-
-
 export async function updateUserKycInfo(req) {
   try {
     await prisma.kyc_info.update({
