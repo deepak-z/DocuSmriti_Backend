@@ -31,13 +31,13 @@ export async function saveKycInfo(req) {
 
     const url = constant.ZOOP_ONE_OTP_API
     let headers = new Map()
-    headers.set("app-id", config.zoop.api_id)
-    headers.set("api-key", config.zoop.api_key)
+    headers.set("app-id", config.zoop.apiId)
+    headers.set("api-key", config.zoop.apiKey)
     const body = {
         "data": {
-            "customer_aadhaar_number": "240477347931",
+            "customer_aadhaar_number": `${req.body.aadhaar_number}`,
             "consent": "Y",
-            "consent_text": "I hear by declare my consent agreement for fetching my information via ZOOP API",
+            "consent_text": constant.ZOOP_CONSENT_TEXT,
         },
     }
     const [status, response, er] = await externalApiCall('post', url, body, headers)
@@ -47,7 +47,7 @@ export async function saveKycInfo(req) {
     if(status == 200 && response["result"]["is_otp_sent"]){
         return  ["otp sent succesfully", null]
     }
-    return ["unable to send OTP", "OTP SENT FAILED"];
+    return ["unable to send OTP", response["metadata"]["reason_message"]];
 }
 
 function validateRequest(req) {

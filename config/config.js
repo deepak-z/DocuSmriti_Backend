@@ -31,8 +31,8 @@ const config = {
     docuSmritiWalletPrivateKey:   process.env.docuSmritiWalletPrivateKey
   },
   zoop: {
-    api_key: process.env.zoopApiKey,
-    api_id: process.env.zoopApiId,
+    apiKey: process.env.zoopApiKey,
+    apiId: process.env.zoopApiId,
   },
 };
 
