@@ -19,5 +19,6 @@ router.get("/acceptContract/getQuote", verifyGoogleToken, verifyUser(true, true)
 
 router.get("/kyc",verifyGoogleToken,verifyUser(true,true), GetKycInfo)
 router.post("/kyc", verifyGoogleToken, verifyUser(true, false), SaveUserKycInfo)
+router.post("selfie", verifyGoogleToken, verifyUser(true, false), SaveUserKycInfo)
 
 export default router
