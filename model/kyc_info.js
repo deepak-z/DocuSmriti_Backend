@@ -1,22 +1,20 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 const prisma = new PrismaClient();
 
-export async function saveUserKycInfo(req) {
-  const kycInfoObject = {
-    user_id: req.user.id,
-    first_name: req.body.first_name,
-    last_name: req.body.last_name,
-    dob: req.body.dob,
-    status: "pending", // TODO Need Hyperverge implementation for setting status
-    gender: req.body.gender,
-    aadhaar_number: req.body.aadhaar_number, //TODO Need to follow masking principles
-  }
+export const kyc_info = {
+  NOT_VERIFIED: "not_verified",
+  PENDING: "pending",
+  IN_PROGRESS: "in_progress",
+  VERIFIED: "verified"
+}
+
+export async function saveUserKycInfoObject(kycInfoObject) {
   try {
     const [savedKycInfo, updatedUser] = await prisma.$transaction([
       prisma.kyc_info.create({ data: kycInfoObject }),
       prisma.users.update({
         where: {
-          id: req.user.id,
+          id: kycInfoObject.user_id,
         },
           data: {
             kyc_status: kycInfoObject.status,
@@ -32,11 +30,11 @@ export async function saveUserKycInfo(req) {
   }
 }
 
-export async function getUserKycInfo(req) {
+export async function getUserKycInfoByID(id) {
   try {
     const kycInfo = await prisma.kyc_info.findUnique({
       where: {
-        user_id: req.user.id,
+        user_id: id,
       },
     });
 
@@ -46,34 +44,13 @@ export async function getUserKycInfo(req) {
   }
 }
 
-export async function updateUserKycInfo(req) {
-  try {
-    await prisma.kyc_info.update({
-      where: {
-        user_id: req.user.id,
-      },
-      data: {
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
-        dob: req.body.dob,
-        gender: req.body.gender,
-        aadhaar_number: req.body.aadhaar_number,
-      }
-    });
-    return null;
-  } catch (err) {
-      return err
-  }
-}
-
-
-export async function updateKycObject(id, data) {
+export async function updateUserKycInfoById(id, object) {
   try {
     await prisma.kyc_info.update({
       where: {
         user_id: id,
       },
-      data: data
+      data: object
     });
     return null;
   } catch (err) {
