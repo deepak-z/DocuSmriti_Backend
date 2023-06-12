@@ -3,7 +3,8 @@ const router = Router()
 
 import { verifyGoogleToken, verifyUser } from "../utility/middleware.js"
 
-import { LogIn, SaveUserKycInfo, GetKycInfo } from "../controller/userController.js"
+import { LogIn } from "../controller/userController.js"
+import { GetUserKycInfo, SaveUserKycInfo} from "../controller/kycController.js";
 import { AddContract, ApproveTransaction, EstimateAcceptContractGasPrice, EstimateAddContractGasPrice } from "../controller/contractController.js"
 import { sendEmail } from "../controller/emailController.js"
 
@@ -19,9 +20,8 @@ router.post("/mail",verifyGoogleToken,verifyUser(true,true), sendEmail)
 router.post("/logIn", verifyGoogleToken, LogIn)
 
 // Kyc Routes
-router.get("/kyc",verifyGoogleToken,verifyUser(true,true), GetKycInfo)
+router.get("/kyc",verifyGoogleToken,verifyUser(true,false), GetUserKycInfo)
 router.post("/kyc", verifyGoogleToken, verifyUser(true, false), SaveUserKycInfo)
-router.post("selfie", verifyGoogleToken, verifyUser(true, false), SaveUserKycInfo)
 
 // Contract Routes
 router.post("/addContract", verifyGoogleToken, verifyUser(true, true), AddContract)
