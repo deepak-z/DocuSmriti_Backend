@@ -4,7 +4,7 @@ const router = Router()
 import { verifyGoogleToken, verifyUser } from "../utility/middleware.js"
 
 import { LogIn } from "../controller/userController.js"
-import { GetUserKycInfo, SaveUserKycInfo, VerifyUserKycInfo} from "../controller/kycController.js";
+import { GetUserKycInfo, SaveUserKycInfo, VerifyUserKycInfo, VerifyUserSelfie} from "../controller/kycController.js";
 import { AddContract, ApproveTransaction, EstimateAcceptContractGasPrice, EstimateAddContractGasPrice } from "../controller/contractController.js"
 import { sendEmail } from "../controller/emailController.js"
 
@@ -23,6 +23,7 @@ router.post("/logIn", verifyGoogleToken, LogIn)
 router.get("/kyc",verifyGoogleToken,verifyUser(true,false), GetUserKycInfo)
 router.post("/kyc", verifyGoogleToken, verifyUser(true, false), SaveUserKycInfo)
 router.post("/verify-kyc",verifyGoogleToken,verifyUser(true,false), VerifyUserKycInfo)
+router.post("/selfie",verifyGoogleToken,verifyUser(true,false), VerifyUserSelfie)
 
 // Contract Routes
 router.post("/addContract", verifyGoogleToken, verifyUser(true, true), AddContract)
