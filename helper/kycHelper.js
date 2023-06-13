@@ -145,11 +145,7 @@ export async function verifyUserKycInfo(req){
                 return ["Unable to update kyc info data in database", err]
         }
 
-        if(kycChecksErr != null){ 
-            return [kycChecksResponse,kycChecksErr]
-        }
-
-        return  ["Kyc Checks passed", null]
+        return [kycChecksResponse,kycChecksErr]
     }
     return ["OTP Verification failed", response["metadata"]["reason_message"]];
 }
