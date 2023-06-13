@@ -1,7 +1,7 @@
 
 import { externalApiCall } from "../utility/externalApiCall.js";
 import constant from "../constants/constant.js";
-import { saveUserKycInfo, getUserKycInfo, updateUserKycInfo } from "../model/kyc_info.js";
+import { saveUserKycInfo, getUserKycInfo, updateUserKycInfo, updateKycStatus } from "../model/kyc_info.js";
 import config from "../config/config.js";
 
 export async function saveKycInfo(req) {
@@ -63,17 +63,16 @@ export async function validateSelfie(req) {
     if(user.kyc_status == "verified"){ 
         return ["User kyc is already verified", "VERIFIED USER"]
     }
+    if(user.kyc_status != "in_progress"){ 
+        return ["Aadhaar is not verified", "UNVERIFIED REQUEST"]
+    }
 
     const [kycInfo, err] = await getUserKycInfo(req)
     if(err != null){
         return ["unable to get user kyc data", err]
     }
     if(kycInfo == null){
-        return ["user kyc data not found", "KYC_NOT_INITIATED"]
-    } else {
-        if (kycInfo.status == "rejected") {
-            return ["user kyc is rejected", "KYC_REJECTED"]
-        }
+        return ["user kyc data not found", "KYC NOT INITIATED"]
     }
 
     const url = constant.ZOOP_ONE_SELFIE_API
@@ -93,9 +92,17 @@ export async function validateSelfie(req) {
     if(er != null){
         return ["unable to verify selfie", err]
     }
+    
     if(status == 200){
         if (response["result"]["face_match_score"] > constant.SELFIE_THRESOLD) {
-             
+            const err = updateKycStatus(req.user.id, "verified")
+            if(err != null){
+                return ["unable to update selfie status", err]
+            }
+            return ["Kyc verified successfully", null]
+        } else {
+            const err = updateKycStatus(req.user.id, "rejected")
+            return ["selfie does not match", "INVALID_SELFIE"]
         }
     }
     return ["unable to send OTP", response["metadata"]["reason_message"]];

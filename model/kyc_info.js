@@ -66,16 +66,15 @@ export async function updateUserKycInfo(req) {
   }
 }
 
-export async function verifyKycAndUser(user_id) {
+export async function updateKycStatus(user_id, status) {
   try {
     const [savedKycInfo, updatedUser] = await prisma.$transaction([
-      prisma.kyc_info.create({ data: kycInfoObject }),
       prisma.kyc_info.update({
         where: {
           id: user_id,
         },
           data: {
-            kyc_status: "verified",
+            status: status,
           },
         }),
       prisma.users.update({
@@ -83,15 +82,12 @@ export async function verifyKycAndUser(user_id) {
           id: user_id,
         },
           data: {
-            kyc_status: "verified",
+            kyc_status: status,
           },
         }),
     ]);
-    return [savedKycInfo, null];
+    return null
   } catch (err) {
-    if (err.code == "P2002") {
-      return ["User Kyc Info already stored in DB", err];
-    }
-    return [null, err];
+    return err
   }
 }
