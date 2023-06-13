@@ -1,4 +1,4 @@
-import { getUserKycInfo, saveUserKycInfo, verifyUserKycInfo } from "../helper/kycHelper.js";
+import { getUserKycInfo, saveUserKycInfo, verifyUserKycInfo, verifyUserSelfie } from "../helper/kycHelper.js";
 import { sendResponse } from "../utility/response.js";
 
 export async function GetUserKycInfo(req, res, next) {
@@ -16,3 +16,7 @@ export async function VerifyUserKycInfo(req, res, next) {
   sendResponse(res, response, err);
 }
 
+export async function VerifyUserSelfie(req, res, next) {
+  const [response, err] = await verifyUserSelfie(req);
+  sendResponse(res, response, err);
+}

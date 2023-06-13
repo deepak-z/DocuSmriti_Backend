@@ -4,7 +4,9 @@ import express, { json } from "express";
 import { init as dbInit } from './db/conn.js';
 import cors from "cors";
 const app = express();
-
+import bodyParser from 'body-parser'
+app.use(bodyParser.json({limit: '5mb'}));
+app.use(bodyParser.urlencoded({limit: '5mb', extended: true}));
 app.use(json());
 app.use(cors(config.corsOptions));
 

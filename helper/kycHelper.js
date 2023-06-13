@@ -105,6 +105,9 @@ export async function verifyUserKycInfo(req){
     if(err != null){
         return ["Unable to get user kyc info", err]
     }
+    if(kycInfo == null){
+        return ["User kyc data not found", "KYC NOT INITIATED"]
+    }
 
     const url = constant.ZOOP_ONE_OKYC_OTP_VERIFY_API
     let headers = new Map()
@@ -172,4 +175,69 @@ function userKycChecks(kycInfo,zoopData){
     }
 
     return ["Kyc checks passed",null]
+}
+
+export async function verifyUserSelfie(req) {
+    if(!req.body.selfie) {
+        return ["Invalid or empty selfie string provided", "INVALID REQUEST"]
+    }
+    const user = req.user
+    if(user.kyc_status == kyc_info.VERIFIED){ 
+        return ["User kyc is already verified", "VERIFIED USER"]
+    }
+    if(user.kyc_status != kyc_info.IN_PROGRESS){ 
+        return ["Step 1 and 2 not completed", "INVALID REQUEST"]
+    }
+
+    const [kycInfo, err] = await getUserKycInfo(req)
+    if(err != null){
+        return ["Unable to get user kyc info", err]
+    }
+    if(kycInfo == null){
+        return ["User kyc data not found", "KYC NOT INITIATED"]
+    }
+
+    const url = constant.ZOOP_ONE_FACE_MATCH_API
+    let headers = new Map()
+    headers.set("app-id", config.zoop.apiId)
+    headers.set("api-key", config.zoop.apiKey)
+    const body = {
+        "mode": "sync",
+        "data": {
+          "card_image":     kycInfo.selfie_string,
+          "user_image":     req.body.selfie,
+          "consent":        constant.ZOOP_ONE_CONSENT,
+          "consent_text":   constant.ZOOP_ONE_CONSENT_TEXT
+        },
+    }
+    const [status, response, zoopErr] = await externalApiCall('post', url, body, headers)
+    if(zoopErr != null){
+        return ["Unable to verify selfie", err]
+    }
+    if(status == 200 && response["success"]){
+        var newStatus = kyc_info.VERIFIED
+        var selfieResponseMessage = "Kyc verified successfully"
+        var selfieResponseError = null
+        var data = {}
+
+        if (response["response_code"]!= 100 || response["result"]["face_match_score"] < constant.SELFIE_MATCH_SCORE_THRESOLD) {
+            newStatus = kyc_info.REJECTED
+            selfieResponseMessage = response["result"]? "Selfie match score is less than thresold" : response["metadata"]["reason_message"]
+            selfieResponseError = "SELFIE NOT MATCHED"
+            data.rejection_reason = response["result"]? `Selfie match score is ${response["result"]["face_match_score"]}` : response["metadata"]["reason_message"]
+        } else {
+            data.selfie_match_score = response["result"]["face_match_score"]
+        }
+        
+        const err = await updateUserKycStatus(kycInfo.user_id, newStatus)
+        if(err != null){
+            return ["Unable to update selfie status", err]
+        }
+        const updatedErr = await updateUserKycInfoById(kycInfo.user_id, data)
+        if(updatedErr != null){
+            return ["Unable to update selfie details", updatedErr]
+        }
+        return [selfieResponseMessage, selfieResponseError]
+    }
+    return ["Unable to verify selfie", response["metadata"]["reason_message"]];
 }
