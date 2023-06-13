@@ -1,8 +1,8 @@
 import { externalApiCall } from "../utility/externalApiCall.js";
-import { maskAadhaarNumber } from "../utility/utility.js"
+import { maskAadhaarNumber, validateDOB, validateGender, getAge, nameMatch } from "../utility/utility.js"
 import constant from "../constants/constant.js";
 import { kyc_info } from "../model/kyc_info.js";
-import { saveUserKycInfoObject, getUserKycInfoByID, updateUserKycInfoById } from "../model/kyc_info.js";
+import { saveUserKycInfoObject, getUserKycInfoByID, updateUserKycInfoById, updateUserKycStatus} from "../model/kyc_info.js";
 import config from "../config/config.js";
 
 export async function getUserKycInfo(req){
@@ -16,6 +16,14 @@ export async function saveUserKycInfo(req) {
         return ["Invalid or empty parameters provided", "INVALID REQUEST"]
     }
 
+    if(!validateDOB(req.body.dob)){
+        return ["Invalid DOB, should be in DD/MM/YYYY format","INVALID REQUEST"]
+    }
+
+    if(!validateGender(req.body.gender)){
+        return ["Invalid Gender, gender should be only M , F or T","INVALID_REQUEST"]
+    }
+
     const user = req.user
     if(user.kyc_status == kyc_info.VERIFIED){ 
         return ["User kyc is already verified", "VERIFIED USER"]
@@ -26,7 +34,7 @@ export async function saveUserKycInfo(req) {
         return ["Unable to get user kyc info", err]
     }
 
-    const [maskedAaadhaarNumber,maskError] = await maskAadhaarNumber(req.body.aadhaar_number)
+    const [maskedAaadhaarNumber,maskError] = maskAadhaarNumber(req.body.aadhaar_number)
     if (maskError != null){
         return ["Could not mask aadhaar",maskError]
     }
@@ -37,7 +45,7 @@ export async function saveUserKycInfo(req) {
         dob: req.body.dob,
         gender: req.body.gender,
         aadhaar_number: maskedAaadhaarNumber,
-        status: kyc_info.PENDING,
+        status: kyc_info.INITIATED,
     };
 
     if(kycInfo == null){
@@ -79,4 +87,89 @@ export async function saveUserKycInfo(req) {
         return  ["OTP sent succesfully", null]
     }
     return ["Unable to send OTP", response["metadata"]["reason_message"]];
+}
+
+export async function verifyUserKycInfo(req){
+    if(!req.body.otp){
+        return ["OTP not provided", "INVALID REQUEST"]
+    }
+
+    const user = req.user
+    const otp = req.body.otp
+
+    if(user.kyc_status == kyc_info.VERIFIED){ 
+        return ["User kyc is already verified", "VERIFIED USER"]
+    }
+
+    const [kycInfo, err] = await getUserKycInfoByID(user.id)
+    if(err != null){
+        return ["Unable to get user kyc info", err]
+    }
+
+    const url = constant.ZOOP_ONE_OKYC_OTP_VERIFY_API
+    let headers = new Map()
+    headers.set("app-id", config.zoop.apiId)
+    headers.set("api-key", config.zoop.apiKey)
+    const body = {
+        "data": {
+            "request_id": kycInfo.request_id,
+            "otp": otp,
+            "consent": constant.ZOOP_ONE_CONSENT,
+            "consent_text": constant.ZOOP_ONE_CONSENT_TEXT,
+        },
+    }
+    const [status, response, zoopErr] = await externalApiCall('post', url, body, headers)
+    if(zoopErr != null){
+        return ["Unable to verify OTP", zoopErr]
+    }
+    if(status == 200 && response["success"] && (response["result"] != null)){
+        const [kycChecksResponse, kycChecksErr] = userKycChecks(kycInfo,response["result"])
+
+        var newStatus = kyc_info.IN_PROGRESS;
+        var data = {
+            selfie_string: response["result"]["user_profile_image"]
+        }
+
+        if(kycChecksErr != null) {
+            newStatus = kyc_info.REJECTED
+            data.rejection_reason = kycChecksResponse
+        }
+
+        const err = await updateUserKycStatus(kycInfo.user_id,newStatus)
+        if(err != null){
+            return ["Unable to update status in database", err]
+        }
+
+        const updateDataErr = await updateUserKycInfoById(user.id,data)
+        if(updateDataErr != null){
+                return ["Unable to update kyc info data in database", err]
+        }
+
+        return [kycChecksResponse,kycChecksErr]
+    }
+    return ["OTP Verification failed", response["metadata"]["reason_message"]];
+}
+
+function userKycChecks(kycInfo,zoopData){
+    //1. DOB Check
+    if(kycInfo.dob != zoopData["user_dob"]){
+        return ["DOB mismatch, DOB should be in DD/MM/YYYY format","KYC_CHECK_FAILURE"]
+    }
+
+    //2. Age Check
+    if(getAge(kycInfo.dob) < constant.AGE_LIMIT){
+        return ["Age is less than 18", "KYC_CHECK_FAILURE"]
+    }
+
+    //3. Gender Check
+    if(kycInfo.gender != zoopData["user_gender"]){
+        return ["Gender Mismatch with Aadhaar Data", "KYC_CHECK_FAILURE"]
+    }
+
+    //4. Name Check
+    if(!nameMatch(kycInfo.first_name + kycInfo.last_name,zoopData["user_full_name"])){
+        return ["Name Mismatch with Aadhaar Data", "KYC_CHECK_FAILURE"]
+    }
+
+    return ["Kyc checks passed",null]
 }
