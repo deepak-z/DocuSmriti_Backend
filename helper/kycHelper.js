@@ -215,25 +215,25 @@ export async function verifyUserSelfie(req) {
         return ["Unable to verify selfie", err]
     }
     if(status == 200 && response["success"]){
-        var newStatus = constant.VERIFIED
+        var newStatus = kyc_info.VERIFIED
         var selfieResponseMessage = "Kyc verified successfully"
         var selfieResponseError = null
-        var data = {
-            selfie_match_score : response["result"]["face_match_score"]
-        }
+        var data = {}
 
         if (response["response_code"]!= 100 || response["result"]["face_match_score"] < constant.SELFIE_MATCH_SCORE_THRESOLD) {
-            newStatus = constant.REJECTED
-            selfieResponseMessage = response["result"]? response["metadata"]["reason_message"]: "Selfie match score is less than thresold"
+            newStatus = kyc_info.REJECTED
+            selfieResponseMessage = response["result"]? "Selfie match score is less than thresold" : response["metadata"]["reason_message"]
             selfieResponseError = "SELFIE NOT MATCHED"
-            data.rejection_reason = response["result"]? response["metadata"]["reason_message"]: `Selfie match score is ${response["result"]["face_match_score"]}`
+            data.rejection_reason = response["result"]? `Selfie match score is ${response["result"]["face_match_score"]}` : response["metadata"]["reason_message"]
+        } else {
+            data.selfie_match_score = response["result"]["face_match_score"]
         }
         
-        const err = updateUserKycStatus(kycInfo.user_id, newStatus)
+        const err = await updateUserKycStatus(kycInfo.user_id, newStatus)
         if(err != null){
             return ["Unable to update selfie status", err]
         }
-        const updatedErr = updateUserKycInfoById(kycInfo.user_id, data)
+        const updatedErr = await updateUserKycInfoById(kycInfo.user_id, data)
         if(updatedErr != null){
             return ["Unable to update selfie details", updatedErr]
         }
