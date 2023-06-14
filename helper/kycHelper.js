@@ -218,15 +218,15 @@ export async function verifyUserSelfie(req) {
         var newStatus = kyc_info.VERIFIED
         var selfieResponseMessage = "Kyc verified successfully"
         var selfieResponseError = null
-        var data = {}
+        var data = {
+            selfie_match_score: parseFloat(response["result"]["face_match_score"])
+        }
 
         if (response["response_code"]!= 100 || response["result"]["face_match_score"] < constant.SELFIE_MATCH_SCORE_THRESOLD) {
             newStatus = kyc_info.REJECTED
             selfieResponseMessage = response["result"]? "Selfie match score is less than thresold" : response["metadata"]["reason_message"]
             selfieResponseError = "SELFIE NOT MATCHED"
             data.rejection_reason = response["result"]? `Selfie match score is ${response["result"]["face_match_score"]}` : response["metadata"]["reason_message"]
-        } else {
-            data.selfie_match_score = response["result"]["face_match_score"]
         }
         
         const err = await updateUserKycStatus(kycInfo.user_id, newStatus)
