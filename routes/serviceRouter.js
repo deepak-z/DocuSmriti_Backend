@@ -7,7 +7,7 @@ import { AddContract, ApproveTransaction } from "../controller/contractControlle
 import { EstimateAcceptContractGasPrice, EstimateAddContractGasPrice } from "../controller/contractController.js"
 
 router.get("/", (req, res) => {
-    res.status(200).json({'message' : "Welcome to DocuSmriti Backend. Up and Running"})
+    res.status(200).json({'message' : "Welcome to DocuSmriti Backend. Up and Running "})
 })
 
 router.post("/logIn", verifyGoogleToken, LogIn)
