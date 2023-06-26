@@ -34,5 +34,6 @@ async function migrate(){
     exec('npx prisma migrate dev --name init', (err, info) => {
         console.log("DB migrated");
         console.log(info);
+        console.log(err)
     })
 }
