@@ -42,5 +42,5 @@ export async function getAllUserInfo(start_date, end_date) {
     } catch (err) {
       return [null, err];
     }
-  }
+}
   
