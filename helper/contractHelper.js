@@ -24,14 +24,14 @@ export async function addContract(req) {
     const gasPrice = await web3.eth.getGasPrice()
     const data = txn.encodeABI()
     const nonce = await web3.eth.getTransactionCount(_from)
-    const [price, err] = await getContractPrice()
-    if(err != null) {
-        return ["unable to fetch contract price", err]
-    }
+    //const [price, err] = await getContractPrice()
+    // if(err != null) {
+    //     return ["unable to fetch contract price", err]
+    // }
     const txnData = {
       from:     _from,
       to:       _contractAddress,
-      value:    price,
+      value:    0,
       data,
       gasLimit,
       gasPrice,

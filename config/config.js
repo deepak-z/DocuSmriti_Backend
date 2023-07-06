@@ -30,6 +30,10 @@ const config = {
     docuSmritiWalletAddress:      process.env.docuSmritiWalletAddress,
     docuSmritiWalletPrivateKey:   process.env.docuSmritiWalletPrivateKey
   },
+  zoop: {
+    apiKey: process.env.zoopApiKey,
+    apiId: process.env.zoopApiId,
+  },
 };
 
 export default config;

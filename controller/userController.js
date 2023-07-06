@@ -1,18 +1,12 @@
 import { sendResponse } from "../utility/response.js";
-import { userLogIn } from "../helper/userHelper.js";
-import { saveUserKycInfo, getUserKycInfo } from "../model/kyc_info.js";
+import { userLogIn, getUserStatistics } from "../helper/userHelper.js";
 
 export async function LogIn(req, res, next) {
   const [response, err] = await userLogIn(req);
   sendResponse(res, response, err);
 }
 
-export async function SaveKycInfo(req, res, next) {
-  const [response, err] = await saveUserKycInfo(req);
-  sendResponse(res, response, err);
-}
-
-export async function GetKycInfo(req, res, next) {
-  const [response, err] = await getUserKycInfo(req);
+export async function GetUserStatistics(req, res, next) {
+  const [response, err] = await getUserStatistics(req);
   sendResponse(res, response, err);
 }
