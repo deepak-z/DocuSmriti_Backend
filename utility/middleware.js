@@ -52,6 +52,14 @@ export function verifyUser(checkIsActive, checkKyc) {
 }
 
 
+export async function verifyAdmin(req, res, next) {
+    if(req.userInfo.email != "arshad.k@zebpay.com"){
+        sendResponse(res, "You are not authorized to access admin panel", "INVALID ADMIN")
+        return
+    }
+    next()
+}
+
 
 function getTokenFromHeader(req) {
     if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {

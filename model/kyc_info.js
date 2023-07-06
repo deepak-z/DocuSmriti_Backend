@@ -67,3 +67,19 @@ export async function updateUserKycStatus(id, status) {
     return err;
   }
 }
+
+export async function getAllKycInfo(start_date, end_date) {
+  try {
+    const kycDetails = await prisma.kyc_info.findMany({
+      where: {
+        created_at: {
+          gte: start_date,
+          lte: end_date,
+        },
+      },
+    });
+    return [kycDetails, null];
+  } catch (err) {
+    return [null, err];
+  }
+}

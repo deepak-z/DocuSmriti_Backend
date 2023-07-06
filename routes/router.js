@@ -1,10 +1,10 @@
 import { Router } from "express"
 const router = Router()
 
-import { verifyGoogleToken, verifyUser } from "../utility/middleware.js"
+import { verifyAdmin, verifyGoogleToken, verifyUser } from "../utility/middleware.js"
 
-import { LogIn } from "../controller/userController.js"
-import { GetUserKycInfo, SaveUserKycInfo, VerifyUserKycInfo, VerifyUserSelfie} from "../controller/kycController.js";
+import { LogIn, GetUserStatistics } from "../controller/userController.js"
+import { GetUserKycInfo, SaveUserKycInfo, VerifyUserKycInfo, VerifyUserSelfie, GetKycStatistics} from "../controller/kycController.js";
 import { AddContract, ApproveTransaction, EstimateAcceptContractGasPrice, EstimateAddContractGasPrice } from "../controller/contractController.js"
 import { sendEmail } from "../controller/emailController.js"
 
@@ -31,4 +31,7 @@ router.get("/addContract/getQuote", verifyGoogleToken, verifyUser(true, true), E
 router.post("/acceptContract", verifyGoogleToken, verifyUser(true, true), ApproveTransaction)
 router.get("/acceptContract/getQuote", verifyGoogleToken, verifyUser(true, true), EstimateAcceptContractGasPrice)
 
+
+router.get("/admin/kyc", verifyGoogleToken, verifyAdmin, GetKycStatistics)
+router.get("/admin/user", verifyGoogleToken, verifyAdmin, GetUserStatistics)
 export default router

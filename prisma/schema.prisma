@@ -31,7 +31,7 @@ model kyc_info {
   status             String   @default("")
   gender             String   @default("")
   aadhaar_number     String   @default("")
-  selfie_match_score Float      @default(0)
+  selfie_match_score Float    @default(0)
   rejection_reason   String   @default("")
   selfie_path        String   @default("")
   selfie_string      String?
