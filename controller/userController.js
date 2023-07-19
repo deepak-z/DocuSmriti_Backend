@@ -1,5 +1,5 @@
 import { sendResponse } from "../utility/response.js";
-import { userLogIn } from "../helper/userHelper.js";
+import { userLogIn, getKycStatistics, getUserStatistics } from "../helper/userHelper.js";
 import { saveUserKycInfo, getUserKycInfo } from "../model/kyc_info.js";
 
 export async function LogIn(req, res, next) {
@@ -14,5 +14,15 @@ export async function SaveKycInfo(req, res, next) {
 
 export async function GetKycInfo(req, res, next) {
   const [response, err] = await getUserKycInfo(req);
+  sendResponse(res, response, err);
+}
+
+export async function GetKycStatistics(req, res, next) {
+  const [response, err] = await getKycStatistics(req);
+  sendResponse(res, response, err);
+}
+
+export async function GetUserStatistics(req, res, next) {
+  const [response, err] = await getUserStatistics(req);
   sendResponse(res, response, err);
 }
