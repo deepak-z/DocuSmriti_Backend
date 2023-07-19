@@ -3,7 +3,7 @@ const router = Router()
 
 import { LogIn, SaveKycInfo, GetKycInfo, GetKycStatistics, GetUserStatistics } from "../controller/userController.js"
 import { verifyGoogleToken, verifyUser } from "../utility/middleware.js"
-import { AddContract, ApproveTransaction } from "../controller/contractController.js"
+import { AddContract, ApproveTransaction, GetContractData, ChangeContractCreatePrice} from "../controller/contractController.js"
 import { EstimateAcceptContractGasPrice, EstimateAddContractGasPrice } from "../controller/contractController.js"
 
 router.get("/", (req, res) => {
@@ -23,5 +23,8 @@ router.get("/kyc",verifyGoogleToken,verifyUser(true,true), GetKycInfo)
 
 router.get("/admin/kyc", verifyGoogleToken, GetKycStatistics)
 router.get("/admin/user", verifyGoogleToken, GetUserStatistics)
+router.post("/admin/contract",verifyGoogleToken,GetContractData)
+router.post("/admin/contract-create-price",verifyGoogleToken,ChangeContractCreatePrice)
+
 
 export default router
