@@ -28,3 +28,19 @@ export async function getUserByEmail(email) {
         return [null, err]
     }
 }
+
+export async function getAllUserInfo(start_date, end_date) {
+    try {
+      const userDetails = await prisma.users.findMany({
+        where: {
+          created_at: {
+            gte: start_date,
+            lte: end_date,
+          },
+        },
+      });
+      return [userDetails, null];
+    } catch (err) {
+      return [null, err];
+    }
+  }

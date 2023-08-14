@@ -1,6 +1,15 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 const prisma = new PrismaClient();
 
+export const kyc_info = {
+  NOT_VERIFIED: "not_verified",
+  INITIATED: "initiated",
+  IN_PROGRESS: "in_progress",
+  VERIFIED: "verified",
+  REJECTED: "rejected"
+};
+
+
 export async function saveUserKycInfo(req) {
   const isValidRequest = validateRequest(req);
   if (isValidRequest) {
@@ -66,3 +75,20 @@ function validateRequest(req) {
   }
   return true;
 }
+
+export async function getAllKycInfo(start_date, end_date) {
+  try {
+    const kycDetails = await prisma.kyc_info.findMany({
+      where: {
+        created_at: {
+          gte: start_date,
+          lte: end_date,
+        },
+      },
+    });
+    return [kycDetails, null];
+  } catch (err) {
+    return [null, err];
+  }
+}
+
