@@ -3,7 +3,6 @@ const prisma = new PrismaClient()
 
 export async function createUser(req) {
     const user = {
-        name:   req.userInfo.name,
         email:  req.userInfo.email,
     }
     try {

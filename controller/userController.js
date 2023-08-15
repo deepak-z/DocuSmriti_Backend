@@ -1,6 +1,5 @@
 import { sendResponse } from "../utility/response.js";
 import { userLogIn, getKycStatistics, getUserStatistics } from "../helper/userHelper.js";
-import { saveUserKycInfo, getUserKycInfo } from "../model/kyc_info.js";
 
 export async function LogIn(req, res, next) {
   const [response, err] = await userLogIn(req);

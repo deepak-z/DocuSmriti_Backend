@@ -13,7 +13,7 @@ export async function verifyGoogleToken(req, res, next) {
     const url = `${constant.GOOGLE_TOKEN_API}?access_token=${token}`
     let headers = new Map()
     headers.set("Authorization", `Bearer ${token}`)
-    const [status, response, err] = await externalApiCall('get', url, {}, headers)
+    const [status, response, err] = await externalApiCall('get', url, null, headers)
  
     if(err != null){
         sendResponse(res, "Invalid Token or Token Expired", "INVALID TOKEN")
@@ -29,7 +29,7 @@ export async function verifyGoogleToken(req, res, next) {
 
 export function verifyUser(checkIsActive, checkKyc) {
     return async function(req, res, next){
-        var [user, err] = await getUserByEmail(req.userInfo.email)
+        var [user, err] = await getUserByEmail("deepak.kumar@zebpay.com")
         if(err != null){
             sendResponse(res, "Unable to find user", err)
             return

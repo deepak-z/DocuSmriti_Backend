@@ -1,18 +1,12 @@
 import axios from 'axios';
 
-export async function externalApiCall(method, url, body, header) {
-    let headers = new Map()
+export async function externalApiCall(method, url, body, headers) {
     headers.set("Accept", 'application/json')
-    if(header != null) {
-        for (let [key, value] of header) {
-            headers.set(key, value)
-        }
-    }
     const request = {
         method: method,
         url: url,
-        headers: headers,
-        body: body,
+        headers: Object.fromEntries(headers),
+        data: body,
     }
     try {
         const res = await axios(request)

@@ -6,74 +6,66 @@ export const kyc_info = {
   INITIATED: "initiated",
   IN_PROGRESS: "in_progress",
   VERIFIED: "verified",
-  REJECTED: "rejected"
+  REJECTED: "rejected",
 };
 
-
-export async function saveUserKycInfo(req) {
-  const isValidRequest = validateRequest(req);
-  if (isValidRequest) {
-    const kycInfoObject = {
-      user_id: req.user.id,
-      first_name: req.body.first_name,
-      last_name: req.body.last_name,
-      dob: req.body.dob,
-      status: "verified", // TODO Need Hyperverge implementation for setting status
-      gender: req.body.gender,
-      aadhaar_number: req.body.aadhaar_number, //TODO Need to follow masking principles
-    };
-    try {
-      const [savedKycInfo, updatedUser] = await prisma.$transaction([
-        prisma.kyc_info.create({ data: kycInfoObject }),
-        prisma.users.update({
-          where: {
-            id: req.user.id,
-          },
-          data: {
-            kyc_status: kycInfoObject.status,
-          },
-        }),
-      ]);
-
-      return [savedKycInfo, null];
-    } catch (err) {
-      if (err.code == "P2002") {
-        return ["User Kyc Info already stored in DB", err];
-      }
-      return [null, err];
+export async function saveUserKycInfoObject(kycInfoObject) {
+  try {
+    const [savedKycInfo, updatedUser] = await prisma.$transaction([
+      prisma.kyc_info.create({ data: kycInfoObject }),
+      prisma.users.update({
+        where: { id: kycInfoObject.user_id },
+        data: { kyc_status: kycInfoObject.status },
+      }),
+    ]);
+    return [savedKycInfo, null];
+  } catch (err) {
+    if (err.code == "P2002") {
+      return ["User Kyc Info already stored in DB", err];
     }
-  } else {
-    return ["parameters cannot be empty", "INVALID_REQUEST"];
+    return [null, err];
   }
 }
 
-export async function getUserKycInfo(req) {
+export async function getUserKycInfoByID(id) {
   try {
     const kycInfo = await prisma.kyc_info.findUnique({
-      where: {
-        user_id: req.user.id,
-      },
+      where: { user_id: id },
     });
-
     return [kycInfo, null];
   } catch (err) {
     return [null, err];
   }
 }
 
-function validateRequest(req) {
-  // TODO: need to add conditions for aadhaar_front_path, aadhaar_back_path and selfie_path
-  if (
-    !req.body.first_name ||
-    !req.body.last_name ||
-    !req.body.gender ||
-    !req.body.dob ||
-    !req.body.aadhaar_number
-  ) {
-    console.log(req.body);
-    return false;
+export async function updateUserKycInfo(id, object) {
+  if (object.status) {
+    try {
+      await prisma.$transaction([
+        prisma.kyc_info.update({
+          where: { user_id: id },
+          data: object,
+        }),
+        prisma.users.update({
+          where: { id: id },
+          data: {kyc_status: object.status},
+        }),
+      ]);
+      return null;
+    } catch (err) {
+      return err;
+    }
+  } else {
+    try {
+      await prisma.kyc_info.update({
+        where: { user_id: id },
+        data: object,
+      });
+      return null;
+    } catch (err) {
+      return err;
+    }
   }
-  return true;
 }
 
 export async function getAllKycInfo(start_date, end_date) {
