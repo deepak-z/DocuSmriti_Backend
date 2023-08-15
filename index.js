@@ -1,6 +1,4 @@
 import config from "./config/config.js";
-import indexRouter from './routes/serviceRouter.js';
-import emailRouter from './routes/emailRouter.js';
 import router from './routes/router.js'
 import express, { json } from "express";
 import { init as dbInit } from './db/conn.js';
@@ -14,8 +12,6 @@ app.use(cors(config.corsOptions));
 
 app.use(json());
 app.use(cors(config.corsOptions));
-app.use("/mail", emailRouter);
-app.use('/',indexRouter)
 
 app.use('/v1',router)
 

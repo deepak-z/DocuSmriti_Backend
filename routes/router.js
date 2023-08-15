@@ -3,8 +3,8 @@ const router = Router()
 
 import { verifyGoogleToken, verifyUser } from "../utility/middleware.js"
 
-import { LogIn } from "../controller/userController.js"
-import { GetUserKycInfo, SaveUserKycInfo, VerifyUserKycInfo, VerifyUserSelfie} from "../controller/kycController.js";
+import { LogIn, GetUserStatistics } from "../controller/userController.js"
+import { GetUserKycInfo, SaveUserKycInfo, VerifyUserKycInfo, VerifyUserSelfie, GetKycStatistics} from "../controller/kycController.js";
 import { AddContract, ApproveTransaction, EstimateAcceptContractGasPrice, EstimateAddContractGasPrice,GetContractData, ChangeContractCreatePrice } from "../controller/contractController.js"
 import { sendEmail } from "../controller/emailController.js"
 
@@ -30,6 +30,9 @@ router.post("/addContract", verifyGoogleToken, verifyUser(true, true), AddContra
 router.get("/addContract/getQuote", verifyGoogleToken, verifyUser(true, true), EstimateAddContractGasPrice)
 router.post("/acceptContract", verifyGoogleToken, verifyUser(true, true), ApproveTransaction)
 router.get("/acceptContract/getQuote", verifyGoogleToken, verifyUser(true, true), EstimateAcceptContractGasPrice)
+
+router.get("/admin/kyc", verifyGoogleToken, GetKycStatistics)
+router.get("/admin/user", verifyGoogleToken, GetUserStatistics)
 
 router.post("/admin/contract",verifyGoogleToken,GetContractData)
 router.post("/admin/contract-create-price",verifyGoogleToken,ChangeContractCreatePrice)

@@ -83,4 +83,3 @@ export async function getAllKycInfo(start_date, end_date) {
     return [null, err];
   }
 }
-
