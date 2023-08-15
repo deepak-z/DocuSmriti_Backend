@@ -174,7 +174,8 @@ export async function getContractAdminData(req) {
   
   return [{
     "contract_create_price": (contractData[0] / 1000000000000000000),
-    "contract_balance": (contractData[1]/ 1000000000000000000),
+    "total_contracts_uploaded": contractData[1],
+    "contract_balance": (contractData[2]/ 1000000000000000000),
     "contract_count": contractCount
   }, null]
 
