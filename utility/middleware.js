@@ -29,7 +29,7 @@ export async function verifyGoogleToken(req, res, next) {
 
 export function verifyUser(checkIsActive, checkKyc) {
     return async function(req, res, next){
-        var [user, err] = await getUserByEmail("deepak.kumar@zebpay.com")
+        var [user, err] = await getUserByEmail(req.userInfo.email)
         if(err != null){
             sendResponse(res, "Unable to find user", err)
             return
