@@ -155,30 +155,47 @@ export async function approveTransaction(req) {
   }
 }
 
-export async function getContractAdminData(req) {
-
-  if (!req.body.create_date){
-    return ["Create Date not provided or invalid", "INVALID REQUEST"]
-  }
-
+export async function getContractAdminOverallData(req) {
   const [contractData, dataErr] = await getContractData()
   if (dataErr != null) {
     return ["unable to fetch contact data", dataErr]
   }
 
-  const [contractCount, countErr] = await getContractsByDate(req.body.create_date)
-  if (dataErr != null) {
-    return ["unable to fetch contact data", countErr]
-  }
-
-  
   return [{
     "contract_create_price": (contractData[0] / 1000000000000000000),
-    "total_contracts_uploaded": contractData[1],
+    "total_contracts_uploaded": parseInt(contractData[1]),
     "contract_balance": (contractData[2]/ 1000000000000000000),
-    "contract_count": contractCount
   }, null]
+}
 
+export async function getContractAdminDateData(req) {
+
+  if (!req.body.start_date){
+    return ["Start Date not provided or invalid", "INVALID REQUEST"]
+  }
+
+  var contractCount = 0
+  var contractBalance = 0
+
+  const parts = req.body.start_date.split("/"); // Split the input into day, month, and year parts
+  const date = new Date(parts[2], parts[1] - 1, parts[0]);
+  const currentDate = new Date();
+  
+  while (date <= currentDate) {
+    const formattedDate = date.toLocaleDateString('en-GB');
+    const [contractDateData, dataErr] = await getContractDateData(formattedDate)
+    if (dataErr != null) {
+      return ["unable to fetch contact data", dataErr]
+    }
+    contractCount += parseInt(contractDateData[0])
+    contractBalance +=  (contractDateData[1] / 1000000000000000000)
+    date.setDate(date.getDate() + 1);
+  }
+
+  return [{
+    "contract_balance_in_range": contractBalance,
+    "contract_count_in_range": contractCount,
+  }, null]
 }
 
 export async function changeContractCreatePrice(req) {
@@ -235,9 +252,9 @@ async function getContractData(){
   }
 }
 
-async function getContractsByDate(createDate){
+async function getContractDateData(createDate){
   try{
-    const result = await contract.methods.getContractsCount_date(createDate).call({from: _from});
+    const result = await contract.methods.getContractDateData(createDate).call({from: _from});
     return [result, null]
   }
   catch(err) {

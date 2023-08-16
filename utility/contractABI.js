@@ -290,6 +290,30 @@ const abi = [
 		"inputs": [
 			{
 				"internalType": "string",
+				"name": "_createdate",
+				"type": "string"
+			}
+		],
+		"name": "getContractDateData",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
 				"name": "_email",
 				"type": "string"
 			},
@@ -334,25 +358,6 @@ const abi = [
 			}
 		],
 		"name": "getContractsCount_address",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_createdate",
-				"type": "string"
-			}
-		],
-		"name": "getContractsCount_date",
 		"outputs": [
 			{
 				"internalType": "uint256",

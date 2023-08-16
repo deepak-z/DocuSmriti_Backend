@@ -1,4 +1,4 @@
-import { addContract, estimateAddContractGasPrice, approveTransaction, estimateAcceptContractGasPrice, getContractAdminData, changeContractCreatePrice } from "../helper/contractHelper.js"
+import { addContract, estimateAddContractGasPrice, approveTransaction, estimateAcceptContractGasPrice, getContractAdminOverallData, getContractAdminDateData, changeContractCreatePrice } from "../helper/contractHelper.js"
 import { sendResponse } from "../utility/response.js"
 
 export async function AddContract(req, res, next){
@@ -21,8 +21,13 @@ export async function EstimateAcceptContractGasPrice(req, res, next) {
     sendResponse(res, response, err)
 }
 
-export async function GetContractData(req,res,next) {
-    const [response, err] = await getContractAdminData(req)
+export async function GetContractAdminOverallData(req,res,next) {
+    const [response, err] = await getContractAdminOverallData(req)
+    sendResponse(res, response, err)
+}
+
+export async function GetContractAdminDateData(req,res,next) {
+    const [response, err] = await getContractAdminDateData(req)
     sendResponse(res, response, err)
 }
 
