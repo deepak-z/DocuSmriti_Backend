@@ -5,7 +5,7 @@ import { verifyGoogleToken, verifyUser } from "../utility/middleware.js"
 
 import { LogIn, GetUserStatistics } from "../controller/userController.js"
 import { GetUserKycInfo, SaveUserKycInfo, VerifyUserKycInfo, VerifyUserSelfie, GetKycStatistics} from "../controller/kycController.js";
-import { AddContract, ApproveTransaction, EstimateAcceptContractGasPrice, EstimateAddContractGasPrice,GetContractData, ChangeContractCreatePrice } from "../controller/contractController.js"
+import { AddContract, ApproveTransaction, EstimateAcceptContractGasPrice, EstimateAddContractGasPrice,GetContractAdminOverallData, GetContractAdminDateData, ChangeContractCreatePrice } from "../controller/contractController.js"
 import { sendEmail } from "../controller/emailController.js"
 
 // Service Routes
@@ -34,6 +34,7 @@ router.get("/acceptContract/getQuote", verifyGoogleToken, verifyUser(true, true)
 router.get("/admin/kyc", verifyGoogleToken, GetKycStatistics)
 router.get("/admin/user", verifyGoogleToken, GetUserStatistics)
 
-router.post("/admin/contract",verifyGoogleToken,GetContractData)
+router.get("/admin/contract/overall",verifyGoogleToken,GetContractAdminOverallData)
+router.post("/admin/contract/date",verifyGoogleToken, GetContractAdminDateData)
 router.post("/admin/contract-create-price",verifyGoogleToken,ChangeContractCreatePrice)
 export default router
