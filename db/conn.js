@@ -31,7 +31,7 @@ const createDatabase = async () => {
 
 
 async function migrate(){
-    exec('npx prisma migrate dev --name init', (err, info) => {
+    exec('npx prisma db push --preview-feature', (err, info) => {
         console.log("DB migrated");
         console.log(info);
         console.log(err)
